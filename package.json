@@ -1,0 +1,41 @@
+{
+  "name": "attendancemanagement",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "devBuild": "SET NODE_ENV=development && webpack",
+    "prodBuild": "SET NODE_ENV=production && webpack",
+    "devDebug": "SET NODE_ENV=development && webpack-dev-server --hot",
+    "prodDebug": "SET NODE_ENV=production && webpack serve --hot",
+    "devWatch": "SET NODE_ENV=development && webpack -w",
+    "prodWatch": "SET NODE_ENV=production && webpack -w",
+    "devClaspPush": "SET NODE_ENV=development && webpack && clasp push --force && clasp open",
+    "prodClaspPush": "SET NODE_ENV=production && webpack && clasp push --force && clasp open",
+    "claspCreate": "clasp create --rootDir .\\dist"
+  },
+  "author": "mat",
+  "license": "MIT",
+  "devDependencies": {
+    "gas-webpack-plugin": "^1.2.2",
+    "html-webpack-inline-source-plugin": "1.0.0-beta.2",
+    "html-webpack-plugin": "4.2.0",
+    "ts-loader": "8.0.2",
+    "typescript": "3.8.3",
+    "webpack": "4.44.1",
+    "webpack-cli": "3.3.12",
+    "webpack-dev-server": "3.11.0"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "@types/google-apps-script": "1.0.14",
+    "@types/react": "16.9.34",
+    "@types/react-dom": "16.9.6",
+    "@types/react-router-dom": "5.1.4",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-hook-form": "6.3.0",
+    "react-router-dom": "5.1.2"
+  }
+}

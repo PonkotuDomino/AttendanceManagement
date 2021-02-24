@@ -1,0 +1,6 @@
+*.js
+*.js.LICENSE.txt
+*.js.map
+!*.ts
+!*.json
+!*.html
