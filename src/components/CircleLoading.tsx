@@ -45,37 +45,34 @@ const useStyle = makeStyles(theme => createStyles({
             delay: 0,
         })
     },
-
 }));
 
 /** アニメーションの終了はWatchに渡す親要素のBoolean要素にて判定する */
-export const CircleLoading = (P: { watch: boolean }) => {
+export function CircleLoading(props: { watch: boolean }) {
     const classes = useStyle();
     const [flag, setFlag] = React.useState<boolean>(false);
 
-    /** 開始時にふんわりとローディングを表示する */
     useEffect(() => {
         setFlag(true);
     }, [])
 
-    return <Container>
-        <Grid
-            container
-            spacing={0}
-            justify="center"
-            alignItems="center"
-            className={
-                flag
-                    ? !P.watch
-                        ? classes.rootEnd
-                        : classes.rootNext
-                    : classes.rootStart
-            }
-        >
-            <CircularProgress
-                color="primary"
-                size={150}
-            />
-        </Grid>
-    </Container >
+    return (
+        <Container>
+            <Grid
+                container
+                spacing={0}
+                justify="center"
+                alignItems="center"
+                className={
+                    flag
+                        ? !props.watch
+                            ? classes.rootEnd
+                            : classes.rootNext
+                        : classes.rootStart
+                }
+            >
+                <CircularProgress color="primary" size={150} />
+            </Grid>
+        </Container >
+    );
 }

@@ -1,0 +1,250 @@
+export const sampleProps = {
+    s: {
+        spreadId: '', // スプレッドシートID
+        paidHolidayQty: 20, // 有給残
+        // 時間設定
+        settings: [
+            {
+                no: 0,
+                name: '本社',
+                workStartTime: '0900',
+                workEndTime: '1800',
+                restTimeFrom1: '1200',
+                restTimeTo1: '1300',
+                restTimeFrom2: '',
+                restTimeTo2: '',
+                restTimeFrom3: '',
+                restTimeTo3: ''
+            }
+        ],
+        // 労働時間
+        workingTime: {
+            202102: [
+                {
+                    date: 1,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 2,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 3,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 4,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 5,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 6,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                },
+                {
+                    date: 7,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                },
+                {
+                    date: 8,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 9,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 10,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 11,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                },
+                {
+                    date: 12,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 13,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                },
+                {
+                    date: 14,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                },
+                {
+                    date: 15,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 16,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 17,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 18,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 19,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 20,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                },
+                {
+                    date: 21,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                },
+                {
+                    date: 22,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 23,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                },
+                {
+                    date: 24,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 25,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 26,
+                    start: '0900',
+                    end: '1800',
+                    leaveType: 0,
+                    notes: 'テスト入力テスト入力テスト入力',
+                    isChange: 0
+                },
+                {
+                    date: 27,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                },
+                {
+                    date: 28,
+                    start: '',
+                    end: '',
+                    leaveType: 0,
+                    notes: '',
+                    isChange: 0
+                }
+            ],
+        }
+    }
+};

@@ -1,7 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
-const GasPlugin = require("gas-webpack-plugin");
 
 module.exports = {
 	// モード値を production に設定すると最適化された状態で、
@@ -34,9 +33,10 @@ module.exports = {
 		new HtmlWebpackPlugin({ 
 			inject: true, 
 			inlineSource: '.(js|css|ts|tsx)$', 
-			template: "./public/index.html" 
+			template: "./public/index.html",
+			minify: false 
 		}),
-		new HtmlWebpackInlineSourcePlugin(HtmlWebpackPlugin)
+		new HtmlWebpackInlineSourcePlugin(HtmlWebpackPlugin),
 	],
 	devtool: 'inline-source-map',
 	devServer: {

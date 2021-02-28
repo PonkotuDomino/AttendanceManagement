@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { AppBar, Drawer, Toolbar, IconButton, Typography, makeStyles, createStyles } from "@material-ui/core";
+import { AppBar, Divider, Drawer, List, ListItem, ListItemText, Toolbar, IconButton, Typography, makeStyles, createStyles } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
+import { Link } from "react-router-dom";
 
 const drawerWidth = '240px';
 const useStyles = makeStyles(theme => createStyles({
-    root: {
-        flexGrow: 1,
-    },
     menuButton: {
         marginRight: theme.spacing(2),
     },
@@ -16,7 +14,14 @@ const useStyles = makeStyles(theme => createStyles({
     drawerPaper: {
         width: drawerWidth,
     },
-    toolbar: theme.mixins.toolbar,
+    drawerTitle: {
+        padding: '10px',
+        color: '#1f1f1f'
+    },
+    drawerMenu: {
+        color: '#1f1f1f',
+        textDecoration: 'none',
+    }
 }));
 
 export function Header() {
@@ -45,17 +50,37 @@ export function Header() {
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
                         出退勤管理
-                </Typography>
+                    </Typography>
                 </Toolbar>
             </AppBar>
             <Drawer
-                anchor={'left'}
+                anchor="left"
                 open={open}
                 classes={{
                     paper: classes.drawerPaper,
                 }}
                 onClose={toggleDrawer(false)}
             >
+                <h3 className={classes.drawerTitle}>出退勤管理</h3>
+                <Divider />
+                <List>
+                    <Link to="/" className={classes.drawerMenu}>
+                        <ListItem button className={classes.drawerMenu}>
+                            <ListItemText primary={'トップページ'} />
+                        </ListItem>
+                    </Link>
+                    <Link to="/timeSheets" className={classes.drawerMenu}>
+                        <ListItem button className={classes.drawerMenu}>
+                            <ListItemText primary={'勤務表'} />
+                        </ListItem>
+                    </Link>
+                    <Link to="/settings" className={classes.drawerMenu}>
+                        <ListItem button>
+                            <ListItemText primary={'設定'} />
+                        </ListItem>
+                    </Link>
+                </List>
+                <Divider />
             </Drawer>
         </div>
     );
