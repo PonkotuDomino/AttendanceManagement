@@ -9,10 +9,11 @@ export function CustomTimePicker(props: { value: string, onChange: any }) {
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <TimePicker
+                clearable
                 ampm={false}
-                onChange={(value) => props.onChange(('0' + value.getHours()).slice(-2) + ('0' + value.getMinutes()).slice(-2))}
                 value={time}
                 views={['hours', 'minutes']}
+                onChange={(value) => props.onChange(value ? ('0' + value.getHours()).slice(-2) + ('0' + value.getMinutes()).slice(-2) : null)}
             />
         </MuiPickersUtilsProvider>
     )

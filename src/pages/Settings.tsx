@@ -4,9 +4,8 @@ import { CircleLoading } from "../components/CircleLoading";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import { EditableTable } from "../components/EditableTable";
 import { Header } from "../components/Header";
-import { sampleProps } from "../sampleJson";
 
-export function Settings(props: { email: string }) {
+export function Settings(props: { data: any, onChange: (data: any) => void }) {
     const [loadFlag, setLoadFlag] = useState(false);
     const [tableData, setTableData] = useState([]);
 
@@ -106,16 +105,10 @@ export function Settings(props: { email: string }) {
     ];
 
     useEffect(() => {
-        const id = (props.email || '').split('@')[0].replace('.', '');
-        setTableData(sampleProps[id].settings);
-        setLoadFlag(true);
-
-        // google.script.run
-        // 	.withSuccessHandler(function (value: any) {
-        // 		const [data, setData] = useState(value[id].workingTime[targetMonth]);
-        //      setLoadFlag(true);
-        // 	})
-        // 	.recieveSpreadsheet();
+        if (props.data.settings && props.data.settings.length !== []) {
+            setTableData(props.data.settings);
+            setLoadFlag(true);
+        }
     });
 
     return (

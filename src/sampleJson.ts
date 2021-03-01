@@ -19,7 +19,7 @@ export const sampleProps = {
         ],
         // 労働時間
         workingTime: {
-            202102: [
+            202103: [
                 {
                     date: 1,
                     start: '0900',

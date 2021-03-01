@@ -4,7 +4,6 @@ import { CircleLoading } from "../components/CircleLoading";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import { EditableTable } from "../components/EditableTable";
 import { Header } from "../components/Header";
-import { sampleProps } from "../sampleJson";
 
 const useStyle = makeStyles(theme => createStyles({
 	changeMonthButton: {
@@ -12,24 +11,16 @@ const useStyle = makeStyles(theme => createStyles({
 	},
 }));
 
-export function TimeSheets(props: { email: string }) {
+export function TimeSheets(props: { data: any, onChange: (data: any) => void }) {
 	const classes = useStyle();
 	const [dateObject, setDateObject] = useState(new Date);
 	const [loadFlag, setLoadFlag] = useState(false);
 	const [tableData, setTableData] = useState([]);
 
 	useEffect(() => {
-		const id = (props.email || '').split('@')[0].replace('.', '');
 		const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
-		setTableData(sampleProps[id].workingTime[yearMonth]);
+		setTableData(props.data.workingTime[yearMonth]);
 		setLoadFlag(true);
-
-		// google.script.run
-		// 	.withSuccessHandler(function (value: any) {
-		// 		const [data, setData] = useState(value[id].workingTime[targetMonth]);
-		//      setLoadFlag(true);
-		// 	})
-		// 	.recieveSpreadsheet();
 	});
 
 	const headers = [
@@ -86,7 +77,7 @@ export function TimeSheets(props: { email: string }) {
 		},
 	];
 
-	const handleChangeMonth = (isNext: boolean) => {
+	function handleChangeMonth(isNext: boolean) {
 		let month = dateObject.getMonth();
 		if (isNext) {
 			month++;
@@ -95,7 +86,7 @@ export function TimeSheets(props: { email: string }) {
 		}
 
 		setDateObject(new Date(dateObject.getFullYear(), month, 1));
-	};
+	}
 
 	return (
 		<div>
@@ -119,6 +110,8 @@ export function TimeSheets(props: { email: string }) {
 							newData.isChange = 1;
 							tableData[oldData.tableData.id] = newData;
 							setTableData([...tableData]);
+							props.data.workingTime[dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2)] = tableData;
+							props.onChange(props.data);
 						}
 					}
 				/>
