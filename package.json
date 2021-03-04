@@ -2,7 +2,7 @@
   "name": "attendancemanagement",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "devBuild": "SET NODE_ENV=development && webpack",
     "prodBuild": "SET NODE_ENV=production && webpack",

@@ -30,11 +30,11 @@ module.exports = {
 		extensions: [".ts", ".tsx", ".js", ".json"]
 	},
 	plugins: [
-		new HtmlWebpackPlugin({ 
-			inject: true, 
-			inlineSource: '.(js|css|ts|tsx)$', 
+		new HtmlWebpackPlugin({
+			inject: true,
+			inlineSource: '.(js|css|ts|tsx)$',
 			template: "./public/index.html",
-			minify: false 
+			minify: false
 		}),
 		new HtmlWebpackInlineSourcePlugin(HtmlWebpackPlugin),
 	],

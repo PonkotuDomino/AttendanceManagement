@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles, createStyles, Button, Box } from "@material-ui/core";
 import { Header } from "../components/Header";
-import { sampleProps } from "../sampleJson";
-import { HandleChange } from "react-hook-form/dist/types/form";
 
 const useStyle = makeStyles(theme => createStyles({
 	headerSpacer: theme.mixins.toolbar,
@@ -19,14 +17,13 @@ const useStyle = makeStyles(theme => createStyles({
 
 export function Top(props: { data: any, onChange: (data: any) => void }) {
 	const classes = useStyle();
-	const [commutingStatus, setCommutingStatus] = useState(false);
-
+	const [isCommuting, setCommutingStatus] = useState(0);
 
 	let date = new Date;
 	const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
 	useEffect(() => {
-		setCommutingStatus(!!props.data.workingTime[yearMonth][date.getDate() - 1].start);
-	});
+		setCommutingStatus(props.data.workingTime[yearMonth][date.getDate() - 1].isCommuting ? 1 : 0);
+	}, []);
 
 	// 出勤/退勤ボタン押下時処理
 	function handleCommutingButtonClick() {
@@ -35,7 +32,9 @@ export function Top(props: { data: any, onChange: (data: any) => void }) {
 		}
 
 		date = new Date;
-		props.data.workingTime[yearMonth][date.getDate() - 1][commutingStatus ? 'end' : 'start'] = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
+		const todayData = props.data.workingTime[yearMonth][date.getDate() - 1];
+		todayData[isCommuting ? 'end' : 'start'] = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
+		todayData.isCommuting = isCommuting ? 0 : 1;
 		props.onChange(props.data);
 	}
 
@@ -43,7 +42,7 @@ export function Top(props: { data: any, onChange: (data: any) => void }) {
 		<div className={classes.root}>
 			<Header />
 			<Box m={1}>
-				<Button className={classes.commutingBtn} size="large" color="primary" variant="contained" onClick={handleCommutingButtonClick}>{!!commutingStatus ? '退勤' : '出勤'}</Button>
+				<Button className={classes.commutingBtn} size="large" color="primary" variant="contained" onClick={handleCommutingButtonClick}>{isCommuting ? '退勤' : '出勤'}</Button>
 			</Box>
 		</div>
 	);

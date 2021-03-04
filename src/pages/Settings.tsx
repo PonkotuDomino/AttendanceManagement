@@ -15,6 +15,10 @@ export function Settings(props: { data: any, onChange: (data: any) => void }) {
             field: 'name'
         },
         {
+            title: '単位',
+            field: 'interval'
+        },
+        {
             title: '開始時刻',
             field: 'workStartTime',
             render: ({ workStartTime }) => {
@@ -109,7 +113,7 @@ export function Settings(props: { data: any, onChange: (data: any) => void }) {
             setTableData(props.data.settings);
             setLoadFlag(true);
         }
-    });
+    }, []);
 
     return (
         <div>

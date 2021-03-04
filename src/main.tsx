@@ -18,14 +18,14 @@ export function App() {
 
 	useEffect(() => {
 		// ローカルデバッグ用
-		// setData(sampleProps['s']);
+		// setData(sampleProps['soyat']);
 
 		google.script.run
 			.withSuccessHandler(function (value: string) {
 				setData(JSON.parse(value));
 			})
 			.getData();
-	});
+	}, []);
 
 	function handleChange(data: any) {
 		setData(data);

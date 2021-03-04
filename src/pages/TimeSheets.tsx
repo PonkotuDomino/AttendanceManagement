@@ -14,14 +14,14 @@ const useStyle = makeStyles(theme => createStyles({
 export function TimeSheets(props: { data: any, onChange: (data: any) => void }) {
 	const classes = useStyle();
 	const [dateObject, setDateObject] = useState(new Date);
-	const [loadFlag, setLoadFlag] = useState(false);
 	const [tableData, setTableData] = useState([]);
+	const [loadFlag, setLoadFlag] = useState(false);
 
 	useEffect(() => {
 		const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
-		setTableData(props.data.workingTime[yearMonth]);
+		setTableData((props.data.workingTime[yearMonth] || []).slice());
 		setLoadFlag(true);
-	});
+	}, []);
 
 	const headers = [
 		{
@@ -85,7 +85,20 @@ export function TimeSheets(props: { data: any, onChange: (data: any) => void }) 
 			month--;
 		}
 
-		setDateObject(new Date(dateObject.getFullYear(), month, 1));
+		const newDate = new Date(dateObject.getFullYear(), month, 1);
+		setDateObject(newDate);
+
+		const yearMonth = newDate.getFullYear() + ('0' + (newDate.getMonth() + 1)).slice(-2);
+		setTableData((props.data.workingTime[yearMonth] || []).slice());
+	}
+
+	function handleChangeRow(newData: any, oldData: any) {
+		newData.isChange = 1;
+		delete newData.tableData;
+		tableData[oldData.tableData.id] = newData;
+		setTableData([...tableData]);
+		props.data.workingTime[dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2)] = tableData;
+		props.onChange(props.data);
 	}
 
 	return (
@@ -105,15 +118,7 @@ export function TimeSheets(props: { data: any, onChange: (data: any) => void }) 
 						headerStyle: { width: 'auto', whiteSpace: 'nowrap' },
 						cellStyle: { width: 'auto', whiteSpace: 'nowrap' },
 					}}
-					handleUpdate={
-						(newData, oldData) => {
-							newData.isChange = 1;
-							tableData[oldData.tableData.id] = newData;
-							setTableData([...tableData]);
-							props.data.workingTime[dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2)] = tableData;
-							props.onChange(props.data);
-						}
-					}
+					handleUpdate={handleChangeRow}
 				/>
 			</Box>
 		</div>
