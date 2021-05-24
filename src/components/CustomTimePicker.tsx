@@ -11,6 +11,7 @@ export function CustomTimePicker(props: { value: string, onChange: any }) {
             <TimePicker
                 clearable
                 ampm={false}
+                emptyLabel={'00:00'}
                 value={time}
                 views={['hours', 'minutes']}
                 onChange={(value) => props.onChange(value ? ('0' + value.getHours()).slice(-2) + ('0' + value.getMinutes()).slice(-2) : null)}

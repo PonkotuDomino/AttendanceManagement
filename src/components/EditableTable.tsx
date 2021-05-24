@@ -1,7 +1,19 @@
 import React from "react";
 import MaterialTable, { Localization } from "material-table";
 
-export function EditableTable(props: { title: string, header: any[], data: any[], options?: any, handleUpdate: (newData: any, oldData: any) => any }) {
+export function EditableTable(
+  props: {
+    title: string,
+    header: any[],
+    data: any[],
+    options?: any,
+    handleInsert?: (newData: any) => any,
+    validationInsert?: (newData: any) => boolean,
+    handleUpdate?: (newData: any, oldData: any) => any,
+    validationUpdate?: (newData: any) => boolean,
+    handleDelete?: (oldData: any) => any
+  }) {
+
   const localizationJapanese: Localization = {
     error: "エラー",
     body: {
@@ -55,23 +67,55 @@ export function EditableTable(props: { title: string, header: any[], data: any[]
     },
   };
 
-  const data = props.data;
+  let editable = {};
+  if (props.handleInsert) {
+    editable['onRowAdd'] = (newData: any) =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (props.validationInsert && !props.validationInsert(newData)) {
+            reject();
+            return false;
+          }
+
+          props.handleInsert(newData);
+          resolve(undefined);
+        }, 1000)
+      });
+  }
+
+  if (props.handleUpdate) {
+    editable['onRowUpdate'] = (newData: any, oldData: any) =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (props.validationUpdate && !props.validationUpdate(newData)) {
+            reject();
+            return false;
+          }
+
+          props.handleUpdate(newData, oldData);
+          resolve(undefined);
+        }, 1000)
+      });
+  }
+
+  if (props.handleDelete) {
+    editable['onRowDelete'] = (oldData: any) =>
+      new Promise((resolve) => {
+        setTimeout(() => {
+          props.handleDelete(oldData);
+          resolve(undefined);
+        }, 1000)
+      });
+  }
+
   return (
     <MaterialTable
       title={props.title}
       localization={localizationJapanese}
       columns={props.header}
-      data={data}
+      data={props.data}
       options={props.options}
-      editable={{
-        onRowUpdate: (newData, oldData) =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              props.handleUpdate(newData, oldData);
-              resolve(undefined);
-            }, 1000)
-          }),
-      }}
+      editable={editable}
     />
   )
 }

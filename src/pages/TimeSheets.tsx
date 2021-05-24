@@ -5,7 +5,7 @@ import { CustomTimePicker } from "../components/CustomTimePicker";
 import { EditableTable } from "../components/EditableTable";
 import { Header } from "../components/Header";
 
-const useStyle = makeStyles(theme => createStyles({
+const useStyle = makeStyles(() => createStyles({
 	changeMonthButton: {
 		margin: "10px 0",
 	},
@@ -19,7 +19,7 @@ export function TimeSheets(props: { data: any, onChange: (data: any) => void }) 
 
 	useEffect(() => {
 		const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
-		setTableData((props.data.workingTime[yearMonth] || []).slice());
+		setTableData((props.data.timeSheets[yearMonth] || []).slice());
 		setLoadFlag(true);
 	}, []);
 
@@ -75,6 +75,10 @@ export function TimeSheets(props: { data: any, onChange: (data: any) => void }) 
 			title: '備考',
 			field: 'notes',
 		},
+		{
+			title: '時間設定区分',
+			field: 'workTimeDivision',
+		},
 	];
 
 	function handleChangeMonth(isNext: boolean) {
@@ -89,7 +93,7 @@ export function TimeSheets(props: { data: any, onChange: (data: any) => void }) 
 		setDateObject(newDate);
 
 		const yearMonth = newDate.getFullYear() + ('0' + (newDate.getMonth() + 1)).slice(-2);
-		setTableData((props.data.workingTime[yearMonth] || []).slice());
+		setTableData((props.data.timeSheets[yearMonth] || []).slice());
 	}
 
 	function handleChangeRow(newData: any, oldData: any) {
@@ -97,7 +101,7 @@ export function TimeSheets(props: { data: any, onChange: (data: any) => void }) 
 		delete newData.tableData;
 		tableData[oldData.tableData.id] = newData;
 		setTableData([...tableData]);
-		props.data.workingTime[dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2)] = tableData;
+		props.data.timeSheets[dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2)] = tableData;
 		props.onChange(props.data);
 	}
 

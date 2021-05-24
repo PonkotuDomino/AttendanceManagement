@@ -70,8 +70,13 @@ export function Header() {
                         </ListItem>
                     </Link>
                     <Link to="/timeSheets" className={classes.drawerMenu}>
-                        <ListItem button className={classes.drawerMenu}>
+                        <ListItem button>
                             <ListItemText primary={'勤務表'} />
+                        </ListItem>
+                    </Link>
+                    <Link to="/expenses" className={classes.drawerMenu}>
+                        <ListItem button>
+                            <ListItemText primary={'交通費精算'} />
                         </ListItem>
                     </Link>
                     <Link to="/settings" className={classes.drawerMenu}>

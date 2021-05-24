@@ -24,9 +24,9 @@ function getData() {
     // 今月のデータ有無確認。存在しない場合は作成
     const date = new Date;
     const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
-    if (!userData.workingTime[yearMonth]) {
-        if (!userData.workingTime) {
-            userData.workingTime = {};
+    if (!userData.timeSheets[yearMonth]) {
+        if (!userData.timeSheets) {
+            userData.timeSheets = {};
         }
 
         const thisMonthData = [];
@@ -41,7 +41,7 @@ function getData() {
             });
         }
 
-        userData.workingTime[yearMonth] = thisMonthData;
+        userData.timeSheets[yearMonth] = thisMonthData;
         data[email.split('@')[0].replace('.', '')] = userData;
         cell.setValue(JSON.stringify(data));
     }

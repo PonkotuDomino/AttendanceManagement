@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { makeStyles, createStyles, Button, Box } from "@material-ui/core";
 import { Header } from "../components/Header";
 
+// スタイルの指定
 const useStyle = makeStyles(theme => createStyles({
 	headerSpacer: theme.mixins.toolbar,
 	root: {
 		flexGrow: 1,
-		// はみ出た要素を非表示にする
 		overflow: "hidden",
 		backgroundColor: theme.palette.background.paper,
 	},
@@ -21,8 +21,10 @@ export function Top(props: { data: any, onChange: (data: any) => void }) {
 
 	let date = new Date;
 	const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
+
+	// レンダリング完了後に実行する
 	useEffect(() => {
-		setCommutingStatus(props.data.workingTime[yearMonth][date.getDate() - 1].isCommuting ? 1 : 0);
+		setCommutingStatus(props.data["commuting"]);
 	}, []);
 
 	// 出勤/退勤ボタン押下時処理
@@ -32,9 +34,9 @@ export function Top(props: { data: any, onChange: (data: any) => void }) {
 		}
 
 		date = new Date;
-		const todayData = props.data.workingTime[yearMonth][date.getDate() - 1];
+		const todayData = props.data.timeSheets[yearMonth][date.getDate() - 1];
 		todayData[isCommuting ? 'end' : 'start'] = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
-		todayData.isCommuting = isCommuting ? 0 : 1;
+		props.data["commuting"] = !isCommuting;
 		props.onChange(props.data);
 	}
 
