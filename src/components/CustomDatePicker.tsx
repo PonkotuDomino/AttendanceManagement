@@ -4,16 +4,18 @@ import DateFnsUtils from "@date-io/date-fns";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 
 class LocalizedDateUtils extends DateFnsUtils {
+    // DatePickerヘッダを削除
     getDatePickerHeaderText(date: number | Date) {
         return '';
     }
 
+    // 年表示を削除
     getYearText(date: Date) {
         return '';
     }
 }
 
-export function CustomDatePicker(props: { value: string, onChange: any, mode?: string }) {
+export function CustomDatePicker(props: { label?: string, value: string, onChange: any, mode?: string, required?: boolean }) {
     let dateUtils = DateFnsUtils;
     const options = {
         value: props.value,
@@ -24,6 +26,7 @@ export function CustomDatePicker(props: { value: string, onChange: any, mode?: s
         dateUtils = LocalizedDateUtils;
 
         const thisMonth = new Date();
+        options['label'] = props.label;
         options['disableFuture'] = 'disableFuture';
         options['minDate'] = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
         options['maxDate'] = new Date(thisMonth.getFullYear(), thisMonth.getMonth() + 1, 0);
