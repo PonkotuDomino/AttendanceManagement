@@ -9,6 +9,7 @@ export function Settings(props: { data: any, onChange: (data: any) => void }) {
     const [loadFlag, setLoadFlag] = useState(false);
     const [tableData, setTableData] = useState([]);
 
+    // レンダリング完了後に実行する
     useEffect(() => {
         setTableData(props.data.settings);
         setLoadFlag(true);
