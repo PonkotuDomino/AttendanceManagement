@@ -21,10 +21,11 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function Expenses(props: { data: any, users?: any, onChange: (data: any) => void, createExpensesSheet: (data: any, date: Date, name: string) => void }) {
+export function Expenses(props: { data: any, users?: any, onChange: (data: any, condition?: any) => void, getUserData: (id: string) => any, createExpensesSheet: (data: any, date: Date, name: string) => void }) {
     const classes = useStyle();
     const { handleSubmit, control, errors } = useForm();
     const [meansDetails, displayMeansDetails] = useState(false);
+    const [user, setUser] = useState(props.data.id);
     const [dateObject, setDateObject] = useState(new Date);
     const [loadFlag, setLoadFlag] = useState(false);
     const [tableData, setTableData] = useState([]);
@@ -33,21 +34,21 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any) 
     useEffect(() => {
         if (props.data.settings && props.data.settings.length) {
             const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
-            const monthData = (props.data.expenses[yearMonth] || []);
+            setTableData(props.data.expenses[yearMonth] || []);
             setLoadFlag(true);
-            setTableData(monthData);
         }
     }, []);
 
     // 追加ボタン押下時
     function handleClickAdd(data: any) {
         const thisMonth = new Date();
-        const thisMonthData = props.data.expenses[thisMonth.getFullYear() + ('0' + (thisMonth.getMonth() + 1)).slice(-2)] || [];
+        const month = thisMonth.getFullYear() + ('0' + (thisMonth.getMonth() + 1)).slice(-2);
+        const thisMonthData = props.data.expenses[month] || [];
         data["no"] = thisMonthData.length + 1;
         thisMonthData.push(data);
         setTableData((thisMonth.getMonth() === dateObject.getMonth()) ? [...thisMonthData] : [...tableData]);
-        props.data.expenses[thisMonth.getFullYear() + ('0' + (thisMonth.getMonth() + 1)).slice(-2)] = thisMonthData;
-        props.onChange(props.data);
+        props.data.expenses[month] = thisMonthData;
+        props.onChange(props.data, { type: 'expenses', id: user, month });
 
         alert('追加しました。');
     }
@@ -60,6 +61,14 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any) 
 
         const yearMonth = newDate.getFullYear() + ('0' + (newDate.getMonth() + 1)).slice(-2);
         setTableData(props.data.expenses[yearMonth] || []);
+    }
+
+    // 社員変更時
+    async function handleChangeUser(id: any) {
+        setUser(id);
+        const data = await props.getUserData(id);
+        const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
+        setTableData(data.expenses[yearMonth] || []);
     }
 
     // ヘッダ情報設定
@@ -322,9 +331,36 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any) 
             <Divider variant="middle" />
 
             <Box m={2}>
-                <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" onClick={() => handleChangeMonth(false)}>前月</Button>
-                <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" style={{ marginLeft: '10px' }} onClick={() => handleChangeMonth(true)}>翌月</Button>
-                {props.data.role === 0 ? <Button className={classes.printButton} size="large" color="primary" variant="contained" onClick={() => props.createExpensesSheet(tableData, dateObject, '')}>印刷</Button> : ''}
+                <Grid container spacing={1}>
+                    <Grid item xs={6}>
+                        <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" onClick={() => handleChangeMonth(false)}>前月</Button>
+                        <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" style={{ marginLeft: '10px' }} onClick={() => handleChangeMonth(true)}>翌月</Button>
+                    </Grid>
+                    {
+                        props.data.role === 0
+                            ? (
+                                <Grid item xs={6}>
+                                    <InputLabel id="select-users-label">社員</InputLabel>
+                                    <Select
+                                        autoWidth
+                                        defaultValue={user}
+                                        labelId="select-users-label"
+                                        onChange={e => {
+                                            handleChangeUser(e.target.value);
+                                        }}
+                                    >
+                                        {
+                                            props.users.map((user: { id: string; name: string; }) =>
+                                                <MenuItem value={user.id}>{user.name}</MenuItem>
+                                            )
+                                        }
+                                    </Select>
+                                    <Button className={classes.printButton} size="large" color="primary" variant="contained" onClick={() => props.createExpensesSheet(tableData, dateObject, '')}>印刷</Button>
+                                </Grid>
+                            )
+                            : ''
+                    }
+                </Grid>
                 <EditableTable
                     title={`交通費精算(${dateObject.getFullYear()}年${(dateObject.getMonth() + 1)}月)`}
                     header={headers}

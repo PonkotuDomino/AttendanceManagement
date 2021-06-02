@@ -3,26 +3,25 @@
  exportは禁止
 */
 
-import { NewReleasesRounded } from "@material-ui/icons";
-
 function doGet() {
     return HtmlService.createTemplateFromFile("index").evaluate();
 }
 
-function getData() {
+function getData(id: string) {
     // メールアドレスを取得
     const email = Session.getActiveUser().getEmail();
-    if (!email || email.split('@')[1] !== 'mat-ltd.co.jp') {
+    if (!id && (!email || email.split('@')[1] !== 'mat-ltd.co.jp')) {
         return '{}';
     }
+    const userId = id || email.split('@')[0].replace('.', '');
 
     // スプレッドシートからデータを取得
     const spreadsheet = SpreadsheetApp.openById('19TGC6GK0eIYw6g9hWdGwMMSLYm1ui9r2wft4HuJ3LpE');
     const sheet = spreadsheet.getSheetByName('0');
     const cell = sheet.getRange("A1");
     const data = JSON.parse(cell.getValue());
-    const userData = data[email.split('@')[0].replace('.', '')] || {};
-    if(!Object.keys(userData).length){
+    const userData = data[userId] || {};
+    if (!Object.keys(userData).length) {
         return JSON.stringify({
             data: {}
         });
@@ -49,31 +48,46 @@ function getData() {
         }
 
         userData.timeSheets[yearMonth] = thisMonthData;
-        data[email.split('@')[0].replace('.', '')] = userData;
+        data[userId] = userData;
         cell.setValue(JSON.stringify(data));
+    }
+
+    let users = {};
+    if (!id && (data.role === 0)) {
+        const spreadsheet = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
+        const sheet = spreadsheet.getSheetByName('0');
+        const cell = sheet.getRange("A1");
+        users = JSON.parse(cell.getValue());
     }
 
     return JSON.stringify({
         data: userData,
-        users: {}
+        users: users
     });
 }
 
-function setData(value: string) {
+function setData(value: string, condition?: any) {
     const email = Session.getActiveUser().getEmail();
-    if (!email || email.split('@')[1] !== 'mat-ltd.co.jp') {
-        return {};
+    if (!condition && (!email || email.split('@')[1] !== 'mat-ltd.co.jp')) {
+        return '{}';
     }
+    const userId = ((condition || {}).id) || email.split('@')[0].replace('.', '');
 
     const spreadsheet = SpreadsheetApp.openById('19TGC6GK0eIYw6g9hWdGwMMSLYm1ui9r2wft4HuJ3LpE');
     const sheet = spreadsheet.getSheetByName('0');
     const cell = sheet.getRange("A1");
     const data = JSON.parse(cell.getValue());
-    data[email.split('@')[0].replace('.', '')] = JSON.parse(value);
+    if (!condition) {
+        data[userId] = JSON.parse(value);
+    } else {
+        if (condition.type === 'expenses') {
+            data[userId]['expenses'][condition.month] = JSON.parse(value);
+        }
+    }
     cell.setValue(JSON.stringify(data));
 }
 
-function createExpensesSheet(data: any, year:string, wareki: string, name: string){
+function createExpensesSheet(data: any, year: string, wareki: string, name: string) {
     const dates = wareki.split('/');
     const original = SpreadsheetApp.openById('1WMAP-LCQPwy_7afhZwpkq2JlgvgPhgNxKnuWbX5tn7A');　// ひな形取得
     const sheetName = original.getName() + '_' + name; // 新しいシート名
@@ -121,9 +135,9 @@ function createExpensesSheet(data: any, year:string, wareki: string, name: strin
         targetSheet.getRange("G" + position).setValue(d.to);
         targetSheet.getRange("H" + position).setValue(d.trip === '0' ? '往復' : '片道');
         targetSheet.getRange("J" + position).setValue('\\' + (+d.amount || 0).toLocaleString());
-        
+
         total += (+d.amount ?? 0);
-        if(myCarIndex > 7 || publicTransportIndex > 7){
+        if (myCarIndex > 7 || publicTransportIndex > 7) {
             return '';
         }
     }

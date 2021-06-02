@@ -28,48 +28,68 @@ export function App() {
         setData(sampleProps['soyat']);
         setUsers(userProps);
 
-        google.script.run
-            .withSuccessHandler(function (value: string) {
-                const result = JSON.parse(value);
-                if(Object.keys(result.data).length){
-                    alert('ユーザの取得に失敗しました。');
-                    return false;
-                }
-                setData(result.data);
-                if(result.data.role === 0){
-                    setUsers(result.users);
-                }
-            })
-            .getData();
+        // google.script.run
+        //     .withSuccessHandler(function (value: string) {
+        //         const result = JSON.parse(value);
+        //         if(Object.keys(result.data).length){
+        //             alert('ユーザの取得に失敗しました。');
+        //             return false;
+        //         }
+        //         setData(result.data);
+        //         setUsers(result.users);
+        //     })
+        //     .getData();
     }, []);
 
-    function handleChange(data: any) {
+    function handleChange(value: any, condition?: any) {
         // ローカルデバッグ用
         alert('更新しました。');
 
-        setData(data);
+        if (!condition) {
+            setData(value);
+        } else {
+            if (condition.type === 'expenses') {
+                data[condition.id]['expenses'][condition.month] = value;
+                setData(value);
+            }
+        }
         // google.script.run
-        //     .withSuccessHandler(function () { })
-        //     .setData(JSON.stringify(data));
+        //     .withSuccessHandler(() => { })
+        //     .setData(JSON.stringify(value), condition);
     }
 
     function createExpensesSheet(data: any, date: Date, name: string) {
         // ローカルデバッグ用
         alert('作成しました。');
 
-        const wareki = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'narrow' }).format(date);
-        google.script.run
-            .withSuccessHandler(function (url: string) {
-                if (url) {
-                    window.open(url);
-                } else {
-                    alert('エラーが発生しました。フォルダを確認してください。');
-                }
-            })
-            .createExpensesSheet(data, date.getFullYear(), wareki, name);
+        // const wareki = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'narrow' }).format(date);
+        // google.script.run
+        //     .withSuccessHandler((url: string) => {
+        //         if (url) {
+        //             window.open(url);
+        //         } else {
+        //             alert('エラーが発生しました。フォルダを確認してください。');
+        //         }
+        //     })
+        //     .createExpensesSheet(data, date.getFullYear(), wareki, name);
     }
 
-    const hasData = !!Object.keys(data).length;
+    function getUserData(id: string){
+        return sampleProps[id];
+
+        // return new Promise((resolve, reject) => {
+        //     google.script.run
+        //         .withSuccessHandler((value: string) => {
+        //             const result = JSON.parse(value);
+        //             resolve(result.data);
+        //         })
+        //         .withFailureHandler(()=>{
+        //             reject({});
+        //         })
+        //         .getData();
+        // });
+    }
+
     return (
         <div>
             {
@@ -91,7 +111,7 @@ export function App() {
                                             <Settings data={data} onChange={handleChange} />
                                         </Route>
                                         <Route path="/expenses">
-                                            <Expenses data={data} users={users} onChange={handleChange} createExpensesSheet={createExpensesSheet} />
+                                            <Expenses data={data} users={users} onChange={handleChange} getUserData={getUserData} createExpensesSheet={createExpensesSheet} />
                                         </Route>
                                         <Route>
                                             {/* デフォルトパス */}
