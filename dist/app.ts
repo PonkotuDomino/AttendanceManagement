@@ -20,12 +20,23 @@ function getData(id: string) {
     const sheet = spreadsheet.getSheetByName('0');
     const cell = sheet.getRange('A1');
     const data = JSON.parse(cell.getValue());
-    const userData = data[userId] || {};
-    if (!Object.keys(userData).length) {
-        return JSON.stringify({
-            data: {}
-        });
+    if (!Object.keys(data[userId] || {}).length) {
+        const contact = ContactsApp.getContact(email);
+        data[userId] = {
+            "id": userId,  // id
+            "name": contact ? contact.getFullName() : userId,  // 名前
+            "commuting": false,  // 出勤有無
+            "role": 1,  // 権限 0:管理者 1:一般
+            "paidHolidayQty": 20,  // 有給残
+            "settings": [
+            ],  // 設定
+            "timeSheets": {
+            },  // 出勤表
+            "expenses": {
+            } // 交通費精算
+        };
     }
+    const userData = data[userId];
 
     // 今月のデータ有無確認。存在しない場合は作成
     const date = new Date;
@@ -82,9 +93,9 @@ function setData(value: string, conditions?: any) {
         data[userId] = JSON.parse(value);
     } else {
         if (conditions.type === 'commuting') {
-            data[userId] = value;
+            data[userId] = JSON.parse(value);
         } else if (conditions.type === 'settings') {
-            data[userId]['settings'] = value;
+            data[userId]['settings'] = JSON.parse(value);
         } else if (conditions.type === 'timeSheets' || conditions.type === 'expenses') {
             data[userId][conditions.type][conditions.month] = JSON.parse(value);
         }

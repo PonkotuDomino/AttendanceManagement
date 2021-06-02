@@ -35,7 +35,7 @@ export function Top(props: { data: any, onChange: (data: any, conditions: any) =
         date = new Date;
         const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
         props.data.timeSheets[yearMonth][date.getDate() - 1][isCommuting ? 'end' : 'start'] = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
-        props.data["commuting"] = !isCommuting;
+        props.data.commuting = !isCommuting;
         props.onChange(props.data, {type: 'commuting', id: props.data.id });
 
         setCommutingStatus(!isCommuting);
