@@ -1,9 +1,10 @@
 export const sampleProps = {
     "soyat": {
-        "id": "soyat",
-        "commuting": 0, // 出勤有無
-        "role": 0, // 権限
-        "paidHolidayQty": 20, // 有給残
+        "id": "soyat",  // id
+        "name": "征矢孝昭",  // 名前
+        "commuting": true,  // 出勤有無
+        "role": 0,  // 権限
+        "paidHolidayQty": 20,  // 有給残
         "settings": [
             {
                 "no": 1,
@@ -18,7 +19,7 @@ export const sampleProps = {
                 "restTimeFrom3": "",
                 "restTimeTo3": ""
             }
-        ], // 設定
+        ],  // 設定
         "timeSheets": {
             "202102": [
                 {
@@ -1107,8 +1108,280 @@ export const sampleProps = {
                     "isChange": 0,
                     "workTimeDivision": 1
                 }
+            ],
+            "202106": [
+                {
+                    "date": 1,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 2,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 3,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 4,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 5,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 6,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 7,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 8,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 9,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 10,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 11,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 12,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 13,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 14,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 15,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 16,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 17,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 18,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 19,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 20,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 21,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 22,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 23,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 24,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 25,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 26,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 27,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 28,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 29,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 30,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                }
             ]
-        }, // 出勤表
+        },  // 出勤表
         "expenses": {
             "202006": [
                 {
@@ -1171,10 +1444,11 @@ export const sampleProps = {
         } // 交通費精算
     },
     "test": {
-        "id": "test",
-        "commuting": 0, // 出勤有無
-        "role": 0, // 権限
-        "paidHolidayQty": 20, // 有給残
+        "id": "test",  // id
+        "name": "テストユーザ",  // 名前
+        "commuting": true,  // 出勤有無
+        "role": 0,  // 権限
+        "paidHolidayQty": 20,  // 有給残
         "settings": [
             {
                 "no": 1,
@@ -1189,7 +1463,7 @@ export const sampleProps = {
                 "restTimeFrom3": "",
                 "restTimeTo3": ""
             }
-        ], // 設定
+        ],  // 設定
         "timeSheets": {
             "202102": [
                 {
@@ -2278,8 +2552,280 @@ export const sampleProps = {
                     "isChange": 0,
                     "workTimeDivision": 1
                 }
+            ],
+            "202106": [
+                {
+                    "date": 1,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 2,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 3,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 4,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 5,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 6,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 7,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 8,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 9,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 10,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 11,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 12,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 13,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 14,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 15,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 16,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 17,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 18,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 19,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 20,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 21,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 22,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 23,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 24,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 25,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 26,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 27,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 28,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 29,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                },
+                {
+                    "date": 30,
+                    "start": "",
+                    "end": "",
+                    "leaveType": 0,
+                    "notes": "",
+                    "isChange": 0,
+                    "workTimeDivision": 1
+                }
             ]
-        }, // 出勤表
+        },  // 出勤表
         "expenses": {
             "202006": [
                 {

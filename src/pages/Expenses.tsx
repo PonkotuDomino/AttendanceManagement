@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Box, Button, createStyles, Divider, Grid, InputAdornment, InputLabel, makeStyles, MenuItem, Select, TextField } from "@material-ui/core";
 import { CircleLoading } from "../components/CircleLoading";
@@ -11,7 +11,7 @@ const useStyle = makeStyles(() => createStyles({
         margin: '10px 0',
     },
     printButton: {
-        margin: '10px 10px 10px 0',
+        margin: '10px 0 10px 20px',
     },
     gridItem: {
         marginBottom: '10px'
@@ -21,22 +21,23 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function Expenses(props: { data: any, users?: any, onChange: (data: any, condition?: any) => void, getUserData: (id: string) => any, createExpensesSheet: (data: any, date: Date, name: string) => void }) {
+export function Expenses(props: { data: any, users?: any, onChange: (data: any, conditions?: any) => void, getUserData: (id: string) => any, createExpensesSheet: (data: any, date: Date, name: string) => void }) {
     const classes = useStyle();
     const { handleSubmit, control, errors } = useForm();
     const [meansDetails, displayMeansDetails] = useState(false);
-    const [user, setUser] = useState(props.data.id);
+    const [user, setUser] = useState({ id: props.data.id, name: props.data.name });
+    const refUser = useRef(props.data.id);
     const [dateObject, setDateObject] = useState(new Date);
     const [loadFlag, setLoadFlag] = useState(false);
     const [tableData, setTableData] = useState([]);
 
     // レンダリング完了後に実行する
     useEffect(() => {
-        if (props.data.settings && props.data.settings.length) {
-            const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
+        const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
+        if (props.data.expenses) {
             setTableData(props.data.expenses[yearMonth] || []);
-            setLoadFlag(true);
         }
+        setLoadFlag(true);
     }, []);
 
     // 追加ボタン押下時
@@ -47,8 +48,7 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
         data["no"] = thisMonthData.length + 1;
         thisMonthData.push(data);
         setTableData((thisMonth.getMonth() === dateObject.getMonth()) ? [...thisMonthData] : [...tableData]);
-        props.data.expenses[month] = thisMonthData;
-        props.onChange(props.data, { type: 'expenses', id: user, month });
+        props.onChange(tableData, { type: 'expenses', id: user.id, month });
 
         alert('追加しました。');
     }
@@ -64,8 +64,8 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
     }
 
     // 社員変更時
-    async function handleChangeUser(id: any) {
-        setUser(id);
+    async function handleChangeUser(id: any, name: string) {
+        setUser({ id, name });
         const data = await props.getUserData(id);
         const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
         setTableData(data.expenses[yearMonth] || []);
@@ -190,7 +190,7 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
                                 defaultValue={dateObject.getDate()}
                                 control={control}
                                 render={props =>
-                                    <CustomDatePicker value={props.value} onChange={(e: number) => { props.onChange(e); }} mode={'date'} label="日付" />
+                                    <CustomDatePicker value={props.value} onChange={props.onChange} mode={'date'} label="日付" />
                                 }
                             />
                         </Grid>
@@ -331,7 +331,7 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
             <Divider variant="middle" />
 
             <Box m={2}>
-                <Grid container spacing={1}>
+                <Grid container spacing={1} alignItems="flex-end">
                     <Grid item xs={6}>
                         <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" onClick={() => handleChangeMonth(false)}>前月</Button>
                         <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" style={{ marginLeft: '10px' }} onClick={() => handleChangeMonth(true)}>翌月</Button>
@@ -343,19 +343,22 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
                                     <InputLabel id="select-users-label">社員</InputLabel>
                                     <Select
                                         autoWidth
-                                        defaultValue={user}
+                                        defaultValue={user.id}
                                         labelId="select-users-label"
+                                        ref={refUser}
                                         onChange={e => {
-                                            handleChangeUser(e.target.value);
+                                            // name の設定
+                                            const id = e.target.value;
+                                            handleChangeUser(id, props.users.filter((x: { id: unknown; }) => x.id === id).name);
                                         }}
                                     >
                                         {
-                                            props.users.map((user: { id: string; name: string; }) =>
-                                                <MenuItem value={user.id}>{user.name}</MenuItem>
+                                            props.users.map((d: { id: string; name: string; }) =>
+                                                <MenuItem key={d.name} value={d.id}>{d.name}</MenuItem>
                                             )
                                         }
                                     </Select>
-                                    <Button className={classes.printButton} size="large" color="primary" variant="contained" onClick={() => props.createExpensesSheet(tableData, dateObject, '')}>印刷</Button>
+                                    <Button className={classes.printButton} size="large" color="primary" variant="contained" onClick={() => props.createExpensesSheet(tableData, dateObject, user.name)}>印刷</Button>
                                 </Grid>
                             )
                             : ''
@@ -381,16 +384,18 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
                         (newData, oldData) => {
                             tableData[oldData.tableData.id] = newData;
                             setTableData([...tableData]);
-                            props.data.expenses[dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2)] = tableData;
-                            props.onChange(props.data);
+                            const month = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
+                            props.data.expenses[month] = tableData;
+                            props.onChange(tableData, { type: 'expenses', id: user.id, month });
                         }
                     }
                     handleDelete={
                         (oldData) => {
                             tableData.splice(oldData.tableData.id);
                             setTableData([...tableData]);
-                            props.data.expenses[dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2)] = tableData;
-                            props.onChange(props.data);
+                            const month = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
+                            props.data.expenses[month] = tableData;
+                            props.onChange(tableData, { type: 'expenses', id: user.id, month });
                         }
                     }
                 />

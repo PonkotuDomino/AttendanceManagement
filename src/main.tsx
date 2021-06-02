@@ -4,8 +4,9 @@ import { HashRouter, Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core";
 import { CircleLoading } from "./components/CircleLoading";
 import { ErrorPage } from "./pages/ErrorPage";
-import { Settings } from "./pages/Settings";
 import { Expenses } from "./pages/Expenses";
+import { PaidHoliday } from "./pages/PaidHoliday";
+import { Settings } from "./pages/Settings";
 import { TimeSheets } from "./pages/TimeSheets";
 import { Top } from "./pages/Top";
 import { theme } from "./theme";
@@ -14,6 +15,7 @@ import WindowExtention from "../types/WindowExtention";
 // ローカルデバッグ用
 import { sampleProps } from "./sampleJson";
 import { userProps } from "./userJson";
+const DEBUG_USER = "soyat";
 
 // Google Script Run呼び出し用変数を定義
 export let google = WindowExtention.google;
@@ -25,69 +27,100 @@ export function App() {
 
     useEffect(() => {
         // ローカルデバッグ用
-        setData(sampleProps['soyat']);
-        setUsers(userProps);
+        // const d = sampleProps[DEBUG_USER];
+        // setData(d);
+        // if(d.role === 0){
+        //     setUsers(userProps);
+        // }
 
-        // google.script.run
-        //     .withSuccessHandler(function (value: string) {
-        //         const result = JSON.parse(value);
-        //         if(Object.keys(result.data).length){
-        //             alert('ユーザの取得に失敗しました。');
-        //             return false;
-        //         }
-        //         setData(result.data);
-        //         setUsers(result.users);
-        //     })
-        //     .getData();
+        google.script.run
+            .withSuccessHandler(function (d: string) {
+                const result = JSON.parse(d);
+                if(!Object.keys(result.data).length){
+                    alert('ユーザの取得に失敗しました。');
+                    return false;
+                }
+                setData(result.data);
+                setUsers(result.users);
+            })
+            .withFailureHandler(()=>{ })
+            .getData();
     }, []);
 
-    function handleChange(value: any, condition?: any) {
+    // props更新時処理
+    function handleChange(value: any, conditions?: any) {
         // ローカルデバッグ用
-        alert('更新しました。');
+        // alert('更新しました。');
+        // const result = {
+        //     data: sampleProps,
+        //     users: (sampleProps[DEBUG_USER].role === 0) ? userProps : {}
+        // };
+        // if (conditions.type === 'commuting') {
+        //     result.data[conditions.id] = value;
+        // } else if (conditions.type === 'settings') {
+        //     result.data[conditions.id]['settings'] = value;
+        // } else if (conditions.type === 'timeSheets' || conditions.type === 'expenses') {
+        //     result.data[conditions.id][conditions.type][conditions.month] = value;
+        // }
+        // setData(result.data[conditions.id]);
 
-        if (!condition) {
-            setData(value);
-        } else {
-            if (condition.type === 'expenses') {
-                data[condition.id]['expenses'][condition.month] = value;
-                setData(value);
-            }
-        }
-        // google.script.run
-        //     .withSuccessHandler(() => { })
-        //     .setData(JSON.stringify(value), condition);
+        google.script.run
+            .withSuccessHandler((d: string) => {
+                const result = JSON.parse(d);
+                if(!Object.keys(result.data).length){
+                    alert('ユーザの取得に失敗しました。');
+                    return false;
+                }
+                setData(result.data);
+                setUsers(result.users);
+            })
+            .withFailureHandler(()=>{ })
+            .setData(JSON.stringify(value), conditions);
     }
 
-    function createExpensesSheet(data: any, date: Date, name: string) {
+    // 勤務表印刷
+    function createTimeSheet(){
         // ローカルデバッグ用
-        alert('作成しました。');
+        // alert('作成しました。');
 
-        // const wareki = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'narrow' }).format(date);
-        // google.script.run
-        //     .withSuccessHandler((url: string) => {
-        //         if (url) {
-        //             window.open(url);
-        //         } else {
-        //             alert('エラーが発生しました。フォルダを確認してください。');
-        //         }
-        //     })
-        //     .createExpensesSheet(data, date.getFullYear(), wareki, name);
+        // TODO
+        alert('未実装');
     }
 
+    // 交通費精算書
+    function createExpensesSheet(value: any, date: Date, name: string) {
+        // ローカルデバッグ用
+        // alert('作成しました。');
+
+        const wareki = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'narrow' }).format(date);
+        google.script.run
+            .withSuccessHandler((url: string) => {
+                if (url) {
+                    window.open(url);
+                } else {
+                    alert('エラーが発生しました。フォルダを確認してください。');
+                }
+            })
+            .withFailureHandler(()=>{ })
+            .createExpensesSheet(value, date.getFullYear(), wareki, name);
+    }
+
+    // 指定IDの社員情報を取得
     function getUserData(id: string){
-        return sampleProps[id];
+        // ローカルデバッグ用
+        // return sampleProps[id];
 
-        // return new Promise((resolve, reject) => {
-        //     google.script.run
-        //         .withSuccessHandler((value: string) => {
-        //             const result = JSON.parse(value);
-        //             resolve(result.data);
-        //         })
-        //         .withFailureHandler(()=>{
-        //             reject({});
-        //         })
-        //         .getData();
-        // });
+        return new Promise((resolve, reject) => {
+            google.script.run
+                .withSuccessHandler((value: string) => {
+                    const result = JSON.parse(value);
+                    resolve(result.data);
+                })
+                .withFailureHandler(()=>{
+                    reject({});
+                })
+                .getData(id);
+        });
     }
 
     return (
@@ -105,13 +138,16 @@ export function App() {
                                             <Top data={data} onChange={handleChange} />
                                         </Route>
                                         <Route path="/timeSheets">
-                                            <TimeSheets data={data} onChange={handleChange} />
+                                            <TimeSheets data={data} users={users} onChange={handleChange} getUserData={getUserData} createTimeSheet={createTimeSheet} />
                                         </Route>
                                         <Route path="/settings">
                                             <Settings data={data} onChange={handleChange} />
                                         </Route>
                                         <Route path="/expenses">
                                             <Expenses data={data} users={users} onChange={handleChange} getUserData={getUserData} createExpensesSheet={createExpensesSheet} />
+                                        </Route>
+                                        <Route path="/paidHoliday">
+                                            <PaidHoliday data={data} onChange={handleChange} />
                                         </Route>
                                         <Route>
                                             {/* デフォルトパス */}

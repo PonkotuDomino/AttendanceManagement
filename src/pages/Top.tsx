@@ -15,12 +15,11 @@ const useStyle = makeStyles(theme => createStyles({
     },
 }));
 
-export function Top(props: { data: any, onChange: (data: any) => void }) {
+export function Top(props: { data: any, onChange: (data: any, conditions: any) => void }) {
     const classes = useStyle();
-    const [isCommuting, setCommutingStatus] = useState(0);
+    const [isCommuting, setCommutingStatus] = useState(false);
 
     let date = new Date;
-    const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
 
     // レンダリング完了後に実行する
     useEffect(() => {
@@ -34,15 +33,18 @@ export function Top(props: { data: any, onChange: (data: any) => void }) {
         }
 
         date = new Date;
-        const todayData = props.data.timeSheets[yearMonth][date.getDate() - 1];
-        todayData[isCommuting ? 'end' : 'start'] = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
+        const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
+        props.data.timeSheets[yearMonth][date.getDate() - 1][isCommuting ? 'end' : 'start'] = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
         props.data["commuting"] = !isCommuting;
-        props.onChange(props.data);
+        props.onChange(props.data, {type: 'commuting', id: props.data.id });
+
+        setCommutingStatus(!isCommuting);
     }
 
     return (
         <div className={classes.root}>
             <Header />
+
             <Box m={1}>
                 <Button className={classes.commutingBtn} size="large" color="primary" variant="contained" onClick={handleCommutingButtonClick}>{isCommuting ? '退勤' : '出勤'}</Button>
             </Box>

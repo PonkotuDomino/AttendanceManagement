@@ -10,8 +10,11 @@
 2．Nodejsをインストール。推奨版のインストールをおすすめします。  
 3．Gitをインストール。  
 4．プロジェクトをクローン(https://github.com/PonkotuDomino/AttendanceManagement.git)する。  
-5．VSCode上で「Ctrl＋＠」でコンソールを表示して「npm install」コマンドを実行します。  
-以上で開発環境が完成します。  
+5．VSCode上で「Ctrl＋＠」でコンソールを表示します。  
+6．「npm install」コマンドを実行してpackage.json内に記述されているパッケージのインストールを行います。※少し時間がかかるかも  
+7．「npm i @google/clasp -g」コマンドを実行しVSCodeとGoogleAppsScriptを連携するパッケージをインストールする。  
+8．「clasp login」コマンドを実行しclaspで使用するgoogleアカウントを設定する。※社内開発なので社内アカウント  
+以上で開発環境が完成します。    
   
 ## ディレクトリ構成  
 dist  

@@ -79,6 +79,11 @@ export function Header() {
                             <ListItemText primary={'交通費精算'} />
                         </ListItem>
                     </Link>
+                    <Link to="/paidHoliday" className={classes.drawerMenu}>
+                        <ListItem button>
+                            <ListItemText primary={'有給管理'} />
+                        </ListItem>
+                    </Link>
                     <Link to="/settings" className={classes.drawerMenu}>
                         <ListItem button>
                             <ListItemText primary={'設定'} />

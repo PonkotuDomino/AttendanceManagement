@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@material-ui/core";
+import { Controller, useForm } from "react-hook-form";
+import { Box, Button, Divider, Grid, createStyles, makeStyles, TextField, InputAdornment } from "@material-ui/core";
 import { CircleLoading } from "../components/CircleLoading";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import { EditableTable } from "../components/EditableTable";
 import { Header } from "../components/Header";
 
-export function Settings(props: { data: any, onChange: (data: any) => void }) {
+const useStyle = makeStyles(() => createStyles({
+    gridItem: {
+        marginBottom: '10px'
+    },
+    errorMessage: {
+        color: 'red'
+    }
+}));
+
+export function Settings(props: { data: any, onChange: (data: any, conditions?: any) => void }) {
+    const classes = useStyle();
+    const { handleSubmit, control, errors } = useForm();
     const [loadFlag, setLoadFlag] = useState(false);
     const [tableData, setTableData] = useState([]);
 
@@ -15,6 +27,21 @@ export function Settings(props: { data: any, onChange: (data: any) => void }) {
         setLoadFlag(true);
     }, []);
 
+    // 追加ボタン押下時
+    function handleClickAdd(data: any) {
+        if (!validation(data)) {
+            return;
+        }
+
+        data["no"] = tableData.length + 1;
+        tableData.push(data);
+        setTableData([...tableData]);
+        props.onChange(tableData, { type: 'settings', id: props.data.id });
+
+        alert('追加しました。');
+    }
+
+    // 入力検証
     function validation({ interval, workStartTime, workEndTime, restTimeFrom1, restTimeTo1, restTimeFrom2, restTimeTo2, restTimeFrom3, restTimeTo3 }) {
         if (interval <= 0 || interval >= 60) {
             alert('単位(分)は0~59の間で指定してください。');
@@ -248,6 +275,127 @@ export function Settings(props: { data: any, onChange: (data: any) => void }) {
         <div>
             <CircleLoading {...{ watch: loadFlag }} />
             <Header />
+
+            <Box m={2}>
+                <form onSubmit={handleSubmit(handleClickAdd)} autoComplete="off">
+                    <Grid container spacing={1}>
+                        <Grid className={classes.gridItem} item xs={8} sm={3}>
+                            <Controller
+                                name="name"
+                                as={TextField}
+                                rules={{ required: true }}
+                                defaultValue=""
+                                control={control}
+                                label="名称"
+                            />
+                            {errors.name && <div className={classes.errorMessage}>必須入力</div>}
+                        </Grid>
+                        <Grid className={classes.gridItem} item xs={6} sm={3}>
+                            <Controller
+                                name="interval"
+                                as={TextField}
+                                rules={{ required: true }}
+                                control={control}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">分</InputAdornment>,
+                                }}
+                                label="単位(分)"
+                                type="number"
+                            />
+                            {errors.interval && <div className={classes.errorMessage}>必須入力</div>}
+                        </Grid>
+                        <Grid className={classes.gridItem} item xs={3}>
+                            <Controller
+                                name="workStartTime"
+                                rules={{ required: true }}
+                                control={control}
+                                render={props =>
+                                    <CustomTimePicker value={props.value} onChange={props.onChange} label="開始時刻" />
+                                }
+                            />
+                            {errors.workStartTime && errors.name.type === "required" && <div className={classes.errorMessage}>必須入力</div>}
+                        </Grid>
+                        <Grid className={classes.gridItem} item xs={3}>
+                            <Controller
+                                name="workEndTime"
+                                rules={{ required: true }}
+                                control={control}
+                                render={props =>
+                                    <CustomTimePicker value={props.value} onChange={props.onChange} label="終了時刻" />
+                                }
+                            />
+                            {errors.workEndTime && <div className={classes.errorMessage}>必須入力</div>}
+                        </Grid>
+                        <Grid className={classes.gridItem} item xs={3}>
+                            <Controller
+                                name="restTimeFrom1"
+                                rules={{ required: true }}
+                                control={control}
+                                render={props =>
+                                    <CustomTimePicker value={props.value} onChange={props.onChange} label="休憩時間From1" />
+                                }
+                            />
+                            {errors.restTimeFrom1 && <div className={classes.errorMessage}>必須入力</div>}
+                        </Grid>
+                        <Grid className={classes.gridItem} item xs={3}>
+                            <Controller
+                                name="restTimeTo1"
+                                rules={{ required: true }}
+                                control={control}
+                                render={props =>
+                                    <CustomTimePicker value={props.value} onChange={props.onChange} label="休憩時間To1" />
+                                }
+                            />
+                            {errors.restTimeTo1 && <div className={classes.errorMessage}>必須入力</div>}
+                        </Grid>
+                        <Grid className={classes.gridItem} item xs={3}>
+                            <Controller
+                                name="restTimeFrom2"
+                                control={control}
+                                render={props =>
+                                    <CustomTimePicker value={props.value} onChange={props.onChange} label="休憩時間From2" />
+                                }
+                            />
+                        </Grid>
+                        <Grid className={classes.gridItem} item xs={3}>
+                            <Controller
+                                name="restTimeTo2"
+                                control={control}
+                                render={props =>
+                                    <CustomTimePicker value={props.value} onChange={props.onChange} label="休憩時間To2" />
+                                }
+                            />
+                        </Grid>
+                        <Grid className={classes.gridItem} item xs={3}>
+                            <Controller
+                                name="restTimeFrom3"
+                                control={control}
+                                render={props =>
+                                    <CustomTimePicker value={props.value} onChange={props.onChange} label="休憩時間From3" />
+                                }
+                            />
+                        </Grid>
+                        <Grid className={classes.gridItem} item xs={3}>
+                            <Controller
+                                name="restTimeTo3"
+                                control={control}
+                                render={props =>
+                                    <CustomTimePicker value={props.value} onChange={props.onChange} label="休憩時間To3" />
+                                }
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container direction="column" alignItems="flex-end">
+                        <Grid item xs>
+                            <Button type="submit" variant="contained" color="primary">追加</Button>
+                        </Grid>
+                    </Grid>
+                </form>
+            </Box>
+
+            <Divider variant="middle" />
+
+            {/* 追加部の追加 */}
             <Box m={2}>
                 <EditableTable
                     title={'時間設定'}
@@ -259,12 +407,6 @@ export function Settings(props: { data: any, onChange: (data: any) => void }) {
                         headerStyle: { width: 'auto', whiteSpace: 'nowrap' },
                         cellStyle: { width: 'auto', whiteSpace: 'nowrap' },
                     }}
-                    handleInsert={
-                        (newData) => {
-                            tableData.push(newData);
-                            setTableData([...tableData]);
-                        }
-                    }
                     validationInsert={validation}
                     handleUpdate={
                         (newData, oldData) => {
