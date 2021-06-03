@@ -14,7 +14,7 @@
 6．「npm install」コマンドを実行してpackage.json内に記述されているパッケージのインストールを行います。※少し時間がかかるかも  
 7．「npm i @google/clasp -g」コマンドを実行しVSCodeとGoogleAppsScriptを連携するパッケージをインストールする。  
 8．「clasp login」コマンドを実行しclaspで使用するgoogleアカウントを設定する。※社内開発なので社内アカウント  
-※8にて「このシステムではスクリプトの実行が無効になっているため～」というエラーが出た場合、「Set-ExecutionPolicy RemoteSigned -Scope Process」コマンドを実行してから再度行ってください。
+※8にて「このシステムではスクリプトの実行が無効になっているため～」というエラーが出た場合、「Set-ExecutionPolicy RemoteSigned -Scope Process」コマンドを実行してから再度行ってください。  
 &emsp;一時的に当システム(このパソコンでのPowerShell)スクリプトの実行条件を変更します。
 以上で開発環境が完成します。    
   
