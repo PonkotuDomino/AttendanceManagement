@@ -63,3 +63,15 @@ webpack.config.js
 &emsp;GAS(GoogleAppsScript)の性質上(サーバサイドレンダリング)、htmlに直にjavascriptを記述する必要性がでてきました。  
 &emsp;html，jsを分けて出力した場合、htmlのjs実行がサーバサイドで行われてしまう。  
 &emsp;サーバサイドで行われると、window，document等が参照不可能になり、エラーが発生。ページの実行すら不可能になる。  
+
+### NPMコマンドに関して
+devBuild：デバッグビルドします。
+prodBuild：プロダクションビルドします。
+devDebug：ローカルでデバッグビルドにて実行します。
+prodDebug：ローカルでプロダクションビルドにて実行します。
+devWatch：？？？
+prodWatch：？？？
+devClaspPush：デバッグビルドでclaspにプッシュします。
+prodClaspPush：プロダクションビルドでclaspにプッシュします。
+claspPush：現在の状態でpushします。
+claspCreate：プロジェクトの作成を行います。
