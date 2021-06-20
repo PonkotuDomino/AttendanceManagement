@@ -9,7 +9,7 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function PaidHoliday(props: { data: any, onChange: (data: any, conditions?: any) => void }) {
+export function PaidHoliday(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
     const classes = useStyle();
     const [loadFlag, setLoadFlag] = useState(false);
 

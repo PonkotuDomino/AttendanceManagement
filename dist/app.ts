@@ -7,116 +7,170 @@ function doGet() {
     return HtmlService.createTemplateFromFile('index').evaluate();
 }
 
-function getData(id: string) {
-    // メールアドレスを取得
+// 初期処理
+function getInitData(): any {
     const email = Session.getActiveUser().getEmail();
-    if (!id && (!email || email.split('@')[1] !== 'mat-ltd.co.jp')) {
-        return '{}';
+    if (!email || email.split('@')[1] !== 'mat-ltd.co.jp') {
+        throw new Error('システムを利用する権限がありません。ログインユーザが正しいか確認してください。');
     }
-    const userId = id || email.split('@')[0].replace('.', '');
 
-    // スプレッドシートからデータを取得
-    const spreadsheet = SpreadsheetApp.openById('19TGC6GK0eIYw6g9hWdGwMMSLYm1ui9r2wft4HuJ3LpE');
+    const userData = getUserData(email);
+    if (!userData) {
+        throw new Error('社員登録が行われていません。システム管理者に確認してください。');
+    }
+
+    return getUserData(email);
+}
+
+// 社員情報取得
+function getUserData(email: string): any {
+    // ユーザマスタ取得
+    const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
+    const userMasterSheet = userMasterSS.getSheetByName('0');
+    const userMasterTextFinder = userMasterSheet.createTextFinder(email);
+    const userMasterIndex = userMasterTextFinder.findNext().getRowIndex() + '';
+    if (!userMasterIndex) {
+        return null;
+    }
+
+    return JSON.parse(userMasterSheet.getRange('B' + userMasterIndex).getValue());
+}
+
+// ページ描画情報の取得
+function getPageData(sheetId: string, conditions?: any): any {
+    const spreadsheet = SpreadsheetApp.openById((conditions && (conditions.type === 'TimeSettings')) ? '19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU' : sheetId);
     const sheet = spreadsheet.getSheetByName('0');
-    const cell = sheet.getRange('A1');
-    const data = JSON.parse(cell.getValue());
-    if (!Object.keys(data[userId] || {}).length) {
-        const contact = ContactsApp.getContact(email);
-        data[userId] = {
-            "id": userId,  // id
-            "name": contact ? contact.getFullName() : userId,  // 名前
-            "commuting": false,  // 出勤有無
-            "role": 1,  // 権限 0:管理者 1:一般
-            "paidHolidayQty": 20,  // 有給残
-            "settings": [
-            ],  // 設定
-            "timeSheets": {
-            },  // 出勤表
-            "expenses": {
-            } // 交通費精算
-        };
-    }
-    const userData = data[userId];
+    const cell = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2);
 
-    // 今月のデータ有無確認。存在しない場合は作成
-    const date = new Date;
+    return {
+        data: convertArrayToObject(cell.getValues()),
+        users: (conditions && ((conditions.role === 0) || (conditions.type === 'TimeSettings'))) ? getUsers(conditions.type) : []
+    };
+}
+
+// 担当者一覧を取得
+function getUsers(type: string): any {
+    const spreadsheet = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
+    const sheet = spreadsheet.getSheetByName('0');
+    const cell = sheet.getRange(11, 1, sheet.getLastRow() - 10, 2);
+    const data = (cell.getValues() || []).map(d => JSON.parse(d[1]));
+    return type === 'TimeSettings'
+        ? data.map(d => { return { id: d['id'], name: d.name }; })
+        : data.map(d => { return { sheetId: d[type + 'SheetId'], name: d.name }; });
+}
+
+// 2次元配列を連想配列に変換
+function convertArrayToObject(values: string | any[]): any {
+    const data = {};
+    for (var i = 0; i < values.length; i++) {
+        data[values[i][0]] = JSON.parse(values[i][1]);
+    }
+    return data;
+}
+
+function setData(conditions: any, value?: any): void {
+    const email = Session.getActiveUser().getEmail();
+    if (!conditions && (!email || email.split('@')[1] !== 'mat-ltd.co.jp')) {
+        throw new Error('システムを利用する権限がありません。ログインユーザが正しいか確認してください。');
+    }
+
+    if (conditions.type === 'Commuting') {
+        changeCommuting(email)
+    } else if (conditions.type === 'WorkingHours') {
+        changeWorkingHours(conditions.sheetId, conditions.yearMonth, value);
+    } else if (conditions.type === 'Expenses') {
+        changeExpenses(conditions.sheetId, conditions.yearMonth, value);
+    } else if (conditions.type === 'TimeSettings') {
+        changeTimeSettings(conditions.id, value)
+    }
+}
+
+// 出退勤状態更新
+function changeCommuting(email: string) {
+    // 出退勤状態設定
+    const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
+    const userMasterSheet = userMasterSS.getSheetByName('0');
+    const userMasterTextFinder = userMasterSheet.createTextFinder(email);
+    const userMasterFindNext = userMasterTextFinder.findNext();
+    if (!userMasterFindNext) {
+        throw new Error('社員登録が行われていません。システム管理者に確認してください。');
+    }
+    const userMasterCell = userMasterSheet.getRange('B' + userMasterFindNext.getRowIndex());
+    const userData = JSON.parse(userMasterCell.getValue());
+    const isCommuting = !userData.commuting; // 変更後の状態
+    userData.commuting = isCommuting;
+    userMasterCell.setValue(JSON.stringify(userData));
+
+    // 時刻設定
+    const workingHoursSS = SpreadsheetApp.openById(userData.WorkingHoursSheetId);
+    const workingHoursSheet = workingHoursSS.getSheetByName('0');
+    const date = new Date();
     const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
-    if (!userData.timeSheets[yearMonth]) {
-        if (!userData.timeSheets) {
-            userData.timeSheets = {};
-        }
+    const workingHoursTextFinder = workingHoursSheet.createTextFinder(yearMonth);
+    const workingHoursFindNext = workingHoursTextFinder.findNext();
+    if (!workingHoursFindNext) {
+        const lastRowIndex = workingHoursSheet.getLastRow() + 1;
+        workingHoursSheet.getRange('A' + lastRowIndex).setValue('\'' + yearMonth);
 
         const thisMonthData = [];
         for (let index = 1; index <= (new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()); index++) {
             thisMonthData.push({
                 date: index,
-                start: '',
+                start: (index === date.getDate()) ? ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2) : '',
                 end: '',
                 leaveType: 0,
                 notes: '',
-                isChange: 0,
+                isChange: false,
                 workTimeDivision: 1
             });
         }
-
-        userData.timeSheets[yearMonth] = thisMonthData;
-        data[userId] = userData;
-        cell.setValue(JSON.stringify(data));
+        workingHoursSheet.getRange('B' + lastRowIndex).setValue(JSON.stringify(thisMonthData));
+    } else {
+        const workingHoursCell = workingHoursSheet.getRange('B' + workingHoursFindNext.getRowIndex());
+        const workingHoursData = JSON.parse(workingHoursCell.getValue());
+        workingHoursData[date.getDate() - 1][isCommuting ? 'start' : 'end'] = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
+        workingHoursCell.setValue(JSON.stringify(workingHoursData));
     }
-
-    let users = {};
-    if (data[userId].role === 0) {
-        const spreadsheet = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
-        const sheet = spreadsheet.getSheetByName('ユーザマスタ');
-        const cell = sheet.getRange('A1');
-        users = JSON.parse(cell.getValue());
-    }
-
-    return JSON.stringify({
-        data: userData,
-        users: users
-    });
 }
 
-function setData(value: string, conditions?: any) {
-    const email = Session.getActiveUser().getEmail();
-    if (!conditions && (!email || email.split('@')[1] !== 'mat-ltd.co.jp')) {
-        return '{}';
+// 出退勤表更新
+function changeWorkingHours(sheetId: string, yearMonth: string, value: any) {
+    const workingHoursSS = SpreadsheetApp.openById(sheetId);
+    const workingHoursSheet = workingHoursSS.getSheetByName('0');
+    const workingHoursTextFinder = workingHoursSheet.createTextFinder(yearMonth);
+    const workingHoursFindNext = workingHoursTextFinder.findNext();
+    if (!workingHoursFindNext) {
+        throw new Error('出退勤表の取得に失敗しました。システム管理者に確認してください。');
     }
-    const userId = ((conditions || {}).id) || email.split('@')[0].replace('.', '');
+    workingHoursSheet.getRange('B' + workingHoursFindNext.getRowIndex()).setValue(JSON.stringify(value));
+}
 
-    const spreadsheet = SpreadsheetApp.openById('19TGC6GK0eIYw6g9hWdGwMMSLYm1ui9r2wft4HuJ3LpE');
-    const sheet = spreadsheet.getSheetByName('0');
-    const cell = sheet.getRange('A1');
-    const data = JSON.parse(cell.getValue());
-    if (!conditions) {
-        data[userId] = JSON.parse(value);
+// 交通費精算更新
+function changeExpenses(sheetId: string, yearMonth: string, value: any) {
+    const expensesSS = SpreadsheetApp.openById(sheetId);
+    const expensesSheet = expensesSS.getSheetByName('0');
+    const expensesTextFinder = expensesSheet.createTextFinder(yearMonth);
+    const expensesFindNext = expensesTextFinder.findNext();
+    if (!expensesFindNext) {
+        const lastRowIndex = expensesSheet.getLastRow() + 1;
+        expensesSheet.getRange('A' + lastRowIndex).setValue(yearMonth);
+        expensesSheet.getRange('B' + lastRowIndex).setValue(JSON.stringify(value));
     } else {
-        if (conditions.type === 'commuting') {
-            data[userId] = JSON.parse(value);
-        } else if (conditions.type === 'settings') {
-            data[userId]['settings'] = JSON.parse(value);
-        } else if (conditions.type === 'timeSheets' || conditions.type === 'expenses') {
-            data[userId][conditions.type][conditions.month] = JSON.parse(value);
-        }
+        expensesSheet.getRange('B' + expensesFindNext.getRowIndex()).setValue(JSON.stringify(value));
     }
+}
 
-    // 要検討
-    let users = {};
-    if (data[userId].role === 0) {
-        const spreadsheet = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
-        const sheet = spreadsheet.getSheetByName('ユーザマスタ');
-        const cell = sheet.getRange('A1');
-        users = JSON.parse(cell.getValue());
+// 時間設定マスタ更新
+function changeTimeSettings(id: string, value: any) {
+    // 出退勤状態設定
+    const timeSettingsSS = SpreadsheetApp.openById('19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU');
+    const timeSettingsSheet = timeSettingsSS.getSheetByName('0');
+    const timeSettingsTextFinder = timeSettingsSheet.createTextFinder(id);
+    const timeSettingsFindNext = timeSettingsTextFinder.findNext();
+    if (!timeSettingsFindNext) {
+        throw new Error('時間設定マスタに登録されていません。システム管理者に確認してください。');
     }
-
-    const result = JSON.stringify(data);
-    cell.setValue(result);
-
-    return JSON.stringify({
-        data: data[userId] || {},
-        users: users || {}
-    });
+    timeSettingsSheet.getRange('B' + timeSettingsFindNext.getRowIndex()).setValue(JSON.stringify(value));
 }
 
 function createExpensesSheet(data: any, year: string, wareki: string, name: string) {
@@ -179,3 +233,6 @@ function createExpensesSheet(data: any, year: string, wareki: string, name: stri
 
     return newSheet.getUrl();
 }
+
+// 出退勤リセットバッチ処理
+// 毎日深夜2時くらい？

@@ -66,10 +66,10 @@ export function Header() {
                 <List>
                     <Link to="/" className={classes.drawerMenu}>
                         <ListItem button className={classes.drawerMenu}>
-                            <ListItemText primary={'トップページ'} />
+                            <ListItemText primary={'出退勤'} />
                         </ListItem>
                     </Link>
-                    <Link to="/timeSheets" className={classes.drawerMenu}>
+                    <Link to="/workingHours" className={classes.drawerMenu}>
                         <ListItem button>
                             <ListItemText primary={'勤務表'} />
                         </ListItem>
@@ -84,7 +84,7 @@ export function Header() {
                             <ListItemText primary={'有給管理'} />
                         </ListItem>
                     </Link>
-                    <Link to="/settings" className={classes.drawerMenu}>
+                    <Link to="/timeSettings" className={classes.drawerMenu}>
                         <ListItem button>
                             <ListItemText primary={'設定'} />
                         </ListItem>

@@ -5,6 +5,7 @@ import { CircleLoading } from "../components/CircleLoading";
 import { CustomDatePicker } from "../components/CustomDatePicker";
 import { EditableTable } from "../components/EditableTable";
 import { Header } from "../components/Header";
+import { google } from "../main";
 
 const useStyle = makeStyles(() => createStyles({
     changeMonthButton: {
@@ -21,54 +22,82 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function Expenses(props: { data: any, users?: any, onChange: (data: any, conditions?: any) => void, getUserData: (id: string) => any, createExpensesSheet: (data: any, date: Date, name: string) => void }) {
+export function Expenses(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
     const classes = useStyle();
+    const pageName = 'Expenses';
     const { handleSubmit, control, errors } = useForm();
     const [meansDetails, displayMeansDetails] = useState(false);
-    const [user, setUser] = useState({ id: props.data.id, name: props.data.name });
-    const refUser = useRef(props.data.id);
-    const [dateObject, setDateObject] = useState(new Date);
-    const [loadFlag, setLoadFlag] = useState(false);
+    const [sheetId, setSheetId] = useState(props.user.ExpensesSheetId);
+    const date = new Date();
+    date.setDate(1);
+    const [targetYearMonth, setTargetYearMonth] = useState(date);
+    const [userList, setUserList] = useState([]);
+    const [expensesData, setExpensesData] = useState([]);
     const [tableData, setTableData] = useState([]);
+    const [loadFlag, setLoadFlag] = useState(false);
 
     // レンダリング完了後に実行する
     useEffect(() => {
-        const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
-        if (props.data.expenses) {
-            setTableData(props.data.expenses[yearMonth] || []);
-        }
-        setLoadFlag(true);
+        const yearMonth = targetYearMonth.getFullYear() + ('0' + (targetYearMonth.getMonth() + 1)).slice(-2);
+
+        google.script.run
+            .withSuccessHandler((result: any) => {
+                setExpensesData(result.data); // 全データ保持
+                setTableData(result.data[yearMonth] || []); // 対象年月の情報を一覧に設定
+                setUserList(result.users); // 社員一覧を設定
+                setLoadFlag(true);
+            })
+            .withFailureHandler((error: { message: any; }) => {
+                alert(error.message);
+            })
+            .getPageData(sheetId, { role: props.user.role, type: pageName });
     }, []);
 
     // 追加ボタン押下時
     function handleClickAdd(data: any) {
         const thisMonth = new Date();
-        const month = thisMonth.getFullYear() + ('0' + (thisMonth.getMonth() + 1)).slice(-2);
-        const thisMonthData = props.data.expenses[month] || [];
-        data["no"] = thisMonthData.length + 1;
-        thisMonthData.push(data);
-        setTableData((thisMonth.getMonth() === dateObject.getMonth()) ? [...thisMonthData] : [...tableData]);
-        props.onChange(tableData, { type: 'expenses', id: user.id, month });
+        const yearMonth = thisMonth.getFullYear() + ('0' + (thisMonth.getMonth() + 1)).slice(-2);
+        const thisYearMonthData = expensesData[yearMonth] || [];
+        data["no"] = thisYearMonthData.length + 1;
+        thisYearMonthData.push(data);
+        setTableData((thisMonth.getMonth() === targetYearMonth.getMonth()) ? [...thisYearMonthData] : [...tableData]);
+        props.onChange({ type: pageName, sheetId: sheetId, yearMonth }, thisYearMonthData);
 
         alert('追加しました。');
     }
 
     // 前月/今月ボタン押下時
     function handleChangeMonth(isNext: boolean) {
-        const month = dateObject.getMonth() + (isNext ? 1 : -1);
-        const newDate = new Date(dateObject.getFullYear(), month, 1);
-        setDateObject(newDate);
+        const month = targetYearMonth.getMonth() + (isNext ? 1 : -1);
+        const newDate = new Date(targetYearMonth.getFullYear(), month, 1);
+        setTargetYearMonth(newDate);
 
         const yearMonth = newDate.getFullYear() + ('0' + (newDate.getMonth() + 1)).slice(-2);
-        setTableData(props.data.expenses[yearMonth] || []);
+        setTableData(expensesData[yearMonth] || []);
     }
 
     // 社員変更時
-    async function handleChangeUser(id: any, name: string) {
-        setUser({ id, name });
-        const data = await props.getUserData(id);
-        const yearMonth = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
-        setTableData(data.expenses[yearMonth] || []);
+    function handleChangeUser(selectedSheetId: string) {
+        setSheetId(selectedSheetId);
+
+        const yearMonth = targetYearMonth.getFullYear() + ('0' + (targetYearMonth.getMonth() + 1)).slice(-2);
+        google.script.run
+            .withSuccessHandler((result: any) => {
+                setExpensesData(result.data); // 全データ保持
+                setTableData(result.data[yearMonth]); // 対象年月の情報を一覧に設定
+            })
+            .withFailureHandler((error: { message: any; }) => {
+                alert(error.message);
+            })
+            .getPageData(selectedSheetId);
+    }
+
+    function createExpensesSheet() {
+        // ローカルデバッグ用
+        // alert('作成しました。');
+
+        // TODO
+        alert('未実装');
     }
 
     // ヘッダ情報設定
@@ -82,7 +111,7 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
         {
             title: '日付',
             field: 'day',
-            editComponent: ({ value, onChange }) => (<CustomDatePicker value={value} onChange={onChange} mode={'date'} targetMonth={dateObject} />)
+            editComponent: ({ value, onChange }) => (<CustomDatePicker value={value} onChange={onChange} mode={'date'} targetMonth={targetYearMonth} />)
         },
         {
             title: '訪問先',
@@ -187,7 +216,7 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
                         <Grid className={classes.gridItem} item xs={3}>
                             <Controller
                                 name="day"
-                                defaultValue={dateObject.getDate()}
+                                defaultValue={targetYearMonth.getDate()}
                                 control={control}
                                 render={props =>
                                     <CustomDatePicker value={props.value} onChange={props.onChange} mode={'date'} label="日付" />
@@ -337,35 +366,33 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
                         <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" style={{ marginLeft: '10px' }} onClick={() => handleChangeMonth(true)}>翌月</Button>
                     </Grid>
                     {
-                        props.data.role === 0
+                        props.user.role === 0
                             ? (
                                 <Grid item xs={6}>
                                     <InputLabel id="select-users-label">社員</InputLabel>
                                     <Select
                                         autoWidth
-                                        defaultValue={user.id}
+                                        defaultValue={props.user.ExpensesSheetId}
                                         labelId="select-users-label"
-                                        ref={refUser}
                                         onChange={e => {
                                             // name の設定
-                                            const id = e.target.value;
-                                            handleChangeUser(id, props.users.filter((x: { id: unknown; }) => x.id === id).name);
+                                            handleChangeUser(e.target.value as string);
                                         }}
                                     >
                                         {
-                                            props.users.map((d: { id: string; name: string; }) =>
-                                                <MenuItem key={d.name} value={d.id}>{d.name}</MenuItem>
+                                            userList.map((d: { sheetId: string; name: string; }) =>
+                                                <MenuItem key={d.name} value={d.sheetId}>{d.name}</MenuItem>
                                             )
                                         }
                                     </Select>
-                                    <Button className={classes.printButton} size="large" color="primary" variant="contained" onClick={() => props.createExpensesSheet(tableData, dateObject, user.name)}>印刷</Button>
+                                    <Button className={classes.printButton} size="large" color="primary" variant="contained" onClick={() => createExpensesSheet()}>印刷</Button>
                                 </Grid>
                             )
                             : ''
                     }
                 </Grid>
                 <EditableTable
-                    title={`交通費精算(${dateObject.getFullYear()}年${(dateObject.getMonth() + 1)}月)`}
+                    title={`交通費精算(${targetYearMonth.getFullYear()}年${(targetYearMonth.getMonth() + 1)}月)`}
                     header={headers}
                     data={tableData}
                     options={{
@@ -382,20 +409,25 @@ export function Expenses(props: { data: any, users?: any, onChange: (data: any, 
                     }
                     handleUpdate={
                         (newData, oldData) => {
+                            delete newData.tableData;
                             tableData[oldData.tableData.id] = newData;
                             setTableData([...tableData]);
-                            const month = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
-                            props.data.expenses[month] = tableData;
-                            props.onChange(tableData, { type: 'expenses', id: user.id, month });
+
+                            const yearMonth = targetYearMonth.getFullYear() + ('0' + (targetYearMonth.getMonth() + 1)).slice(-2);
+                            expensesData[yearMonth] = tableData;
+                            setExpensesData(expensesData);
+                            props.onChange({ type: pageName, sheetId: sheetId, yearMonth }, tableData);
                         }
                     }
                     handleDelete={
                         (oldData) => {
                             tableData.splice(oldData.tableData.id);
                             setTableData([...tableData]);
-                            const month = dateObject.getFullYear() + ('0' + (dateObject.getMonth() + 1)).slice(-2);
-                            props.data.expenses[month] = tableData;
-                            props.onChange(tableData, { type: 'expenses', id: user.id, month });
+
+                            const yearMonth = targetYearMonth.getFullYear() + ('0' + (targetYearMonth.getMonth() + 1)).slice(-2);
+                            expensesData[yearMonth] = tableData;
+                            setExpensesData(expensesData);
+                            props.onChange({ type: pageName, sheetId: sheetId, yearMonth }, tableData);
                         }
                     }
                 />

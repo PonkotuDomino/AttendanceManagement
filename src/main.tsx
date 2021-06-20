@@ -6,127 +6,56 @@ import { CircleLoading } from "./components/CircleLoading";
 import { ErrorPage } from "./pages/ErrorPage";
 import { Expenses } from "./pages/Expenses";
 import { PaidHoliday } from "./pages/PaidHoliday";
-import { Settings } from "./pages/Settings";
-import { TimeSheets } from "./pages/TimeSheets";
-import { Top } from "./pages/Top";
+import { TimeSettings } from "./pages/TimeSettings";
+import { WorkingHours } from "./pages/WorkingHours";
+import { Commuting } from "./pages/Commuting";
 import { theme } from "./theme";
 import WindowExtention from "../types/WindowExtention";
 
 // ローカルデバッグ用
-import { sampleProps } from "./sampleJson";
-import { userProps } from "./userJson";
-const DEBUG_USER = "soyat";
+// import { userMasterJson } from "./debugData/userMasterJson";
+// const DEBUG_EMAIL = "soya.t@mat-ltd.co.jp";
 
 // Google Script Run呼び出し用変数を定義
 export let google = WindowExtention.google;
 
 export function App() {
     // 各ページのpropsに割り当てる個人のデータ
-    const [data, setData] = useState({});
-    const [users, setUsers] = useState([]);
+    const [userData, setUserData] = useState({ commuting: false });
 
     useEffect(() => {
         // ローカルデバッグ用
-        // const d = sampleProps[DEBUG_USER];
-        // setData(d);
-        // if(d.role === 0){
-        //     setUsers(userProps);
-        // }
+        // setUserData(userMasterJson[DEBUG_EMAIL]);
 
         google.script.run
-            .withSuccessHandler(function (d: string) {
-                const result = JSON.parse(d);
-                if(!Object.keys(result.data).length){
-                    alert('ユーザの取得に失敗しました。');
-                    return false;
-                }
-                setData(result.data);
-                setUsers(result.users);
+            .withSuccessHandler((data: any) => {
+                setUserData(data);
             })
-            .withFailureHandler(()=>{ })
-            .getData();
+            .withFailureHandler((error: { message: any; }) => {
+                alert(error.message);
+            })
+            .getInitData();
     }, []);
 
-    // props更新時処理
-    function handleChange(value: any, conditions?: any) {
-        // ローカルデバッグ用
-        // alert('更新しました。');
-        // const result = {
-        //     data: sampleProps,
-        //     users: (sampleProps[DEBUG_USER].role === 0) ? userProps : {}
-        // };
-        // if (conditions.type === 'commuting') {
-        //     result.data[conditions.id] = value;
-        // } else if (conditions.type === 'settings') {
-        //     result.data[conditions.id]['settings'] = value;
-        // } else if (conditions.type === 'timeSheets' || conditions.type === 'expenses') {
-        //     result.data[conditions.id][conditions.type][conditions.month] = value;
-        // }
-        // setData(result.data[conditions.id]);
-
+    // 更新処理
+    function handleChange(conditions: any, value?: any) {
         google.script.run
-            .withSuccessHandler((d: string) => {
-                const result = JSON.parse(d);
-                if(!Object.keys(result.data).length){
-                    alert('ユーザの取得に失敗しました。');
-                    return false;
-                }
-                setData(result.data);
-                setUsers(result.users);
-            })
-            .withFailureHandler(()=>{ })
-            .setData(JSON.stringify(value), conditions);
-    }
-
-    // 勤務表印刷
-    function createTimeSheet(){
-        // ローカルデバッグ用
-        // alert('作成しました。');
-
-        // TODO
-        alert('未実装');
-    }
-
-    // 交通費精算書
-    function createExpensesSheet(value: any, date: Date, name: string) {
-        // ローカルデバッグ用
-        // alert('作成しました。');
-
-        const wareki = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'narrow' }).format(date);
-        google.script.run
-            .withSuccessHandler((url: string) => {
-                if (url) {
-                    window.open(url);
-                } else {
-                    alert('エラーが発生しました。フォルダを確認してください。');
+            .withSuccessHandler(() => {
+                if(conditions.type === 'Commuting'){
+                    userData.commuting = !userData.commuting;
+                    setUserData(userData);
                 }
             })
-            .withFailureHandler(()=>{ })
-            .createExpensesSheet(value, date.getFullYear(), wareki, name);
-    }
-
-    // 指定IDの社員情報を取得
-    function getUserData(id: string){
-        // ローカルデバッグ用
-        // return sampleProps[id];
-
-        return new Promise((resolve, reject) => {
-            google.script.run
-                .withSuccessHandler((value: string) => {
-                    const result = JSON.parse(value);
-                    resolve(result.data);
-                })
-                .withFailureHandler(()=>{
-                    reject({});
-                })
-                .getData(id);
-        });
+            .withFailureHandler((error: { message: any; }) => {
+                alert(error.message);
+            })
+            .setData(conditions, value);
     }
 
     return (
         <div>
             {
-                !!Object.keys(data).length
+                !!Object.keys(userData).length
                     ? (
                         <ThemeProvider theme={theme}>
                             <HashRouter>
@@ -135,23 +64,23 @@ export function App() {
                                     <Switch>
                                         {/* ルーティング */}
                                         <Route exact path="/">
-                                            <Top data={data} onChange={handleChange} />
+                                            <Commuting user={userData} onChange={handleChange} />
                                         </Route>
-                                        <Route path="/timeSheets">
-                                            <TimeSheets data={data} users={users} onChange={handleChange} getUserData={getUserData} createTimeSheet={createTimeSheet} />
+                                        <Route path="/workingHours">
+                                            <WorkingHours user={userData} onChange={handleChange} />
                                         </Route>
-                                        <Route path="/settings">
-                                            <Settings data={data} onChange={handleChange} />
+                                        <Route path="/timeSettings">
+                                            <TimeSettings user={userData} onChange={handleChange} />
                                         </Route>
                                         <Route path="/expenses">
-                                            <Expenses data={data} users={users} onChange={handleChange} getUserData={getUserData} createExpensesSheet={createExpensesSheet} />
+                                            <Expenses user={userData} onChange={handleChange} />
                                         </Route>
                                         <Route path="/paidHoliday">
-                                            <PaidHoliday data={data} onChange={handleChange} />
+                                            <PaidHoliday user={userData} onChange={handleChange} />
                                         </Route>
                                         <Route>
                                             {/* デフォルトパス */}
-                                            <Top data={data} onChange={handleChange} />
+                                            <Commuting user={userData} onChange={handleChange} />
                                         </Route>
                                     </Switch>
                                 </Switch>
@@ -159,7 +88,7 @@ export function App() {
                         </ThemeProvider>
                     )
                     : (
-                        <CircleLoading {...{ watch: !!Object.keys(data).length }} />
+                        <CircleLoading {...{ watch: !!Object.keys(userData).length }} />
                     )
             }
         </div>
