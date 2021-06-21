@@ -20,20 +20,27 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
     const classes = useStyle();
     const pageName = 'TimeSettings';
     const { handleSubmit, control, errors } = useForm();
-    const [userId, setUserId] = useState(props.user.id);
-    const [userList, setUserList] = useState([]);
-    const [timeSettingsData, setTimeSettingsData] = useState({});
-    const [tableData, setTableData] = useState([]);
-    const [loadFlag, setLoadFlag] = useState(false);
+    const [state, setState] = useState({
+        userId: props.user.id, // 社員ID
+        timeSettingsData: [], // 全データ保持
+        tableData: [], // テーブルデータ保持
+        userList: [], // 社員一覧を設定
+        loadFlag: false // 読み込みフラグ
+    });
 
     // レンダリング完了後に実行する
     useEffect(() => {
         google.script.run
             .withSuccessHandler((result: any) => {
-                setTimeSettingsData(result.data || {}); // 全データ保持
-                setTableData(result.data[userId] || []); // 全データ保持
-                setUserList(result.users); // 社員一覧を設定
-                setLoadFlag(true);
+                setState(prevState => {
+                    return {
+                        ...prevState,
+                        timeSettingsData: result.data || {},
+                        tableData: result.data[state.userId] || [],
+                        userList: result.users || [],
+                        loadFlag: true
+                    };
+                });
             })
             .withFailureHandler((error: { message: any; }) => {
                 alert(error.message);
@@ -47,10 +54,17 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
             return;
         }
 
-        data["no"] = tableData.length + 1;
-        tableData.push(data);
-        setTableData([...tableData]);
-        props.onChange({ type: pageName, id: props.user.id }, tableData);
+        data["no"] = state.tableData.length + 1;
+        const newTableData = state.tableData;
+        newTableData.push(data);
+        props.onChange({ type: pageName, id: state.userId }, newTableData);
+
+        setState(prevState => {
+            return {
+                ...prevState,
+                tableData: newTableData
+            };
+        });
 
         alert('追加しました。');
     }
@@ -151,8 +165,13 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
 
     // 社員変更時
     function handleChangeUser(id: string) {
-        setUserId(id);
-        setTableData(timeSettingsData[id]);
+        setState(prevState => {
+            return {
+                ...prevState,
+                userId: id,
+                tableData: (state.timeSettingsData[id] || [])
+            };
+        });
     }
 
     const headers = [
@@ -160,7 +179,7 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
             title: '番号',
             field: 'no',
             editable: 'never',
-            initialEditValue: tableData ? (tableData.length + 1) : 1
+            initialEditValue: state.tableData ? (state.tableData.length + 1) : 1
         },
         {
             title: '名称',
@@ -293,7 +312,7 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
 
     return (
         <div>
-            <CircleLoading {...{ watch: loadFlag }} />
+            <CircleLoading {...{ watch: state.loadFlag }} />
             <Header />
 
             <Box m={2}>
@@ -430,7 +449,7 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
                             }}
                         >
                             {
-                                userList.map((d: { id: string; name: string; }) =>
+                                state.userList.map((d: { id: string; name: string; }) =>
                                     <MenuItem key={d.name} value={d.id}>{d.name}</MenuItem>
                                 )
                             }
@@ -440,7 +459,7 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
                 <EditableTable
                     title={'時間設定'}
                     header={headers}
-                    data={tableData}
+                    data={state.tableData}
                     options={{
                         pageSize: 5,
                         search: false,
@@ -450,9 +469,20 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
                     handleUpdate={
                         (newData, oldData) => {
                             delete newData.tableData;
-                            tableData[oldData.tableData.id] = newData;
-                            setTableData([...tableData]);
-                            props.onChange({ type: pageName, id: userId }, tableData);
+                            const newTableData = state.tableData;
+                            newTableData[oldData.tableData.id] = newData;
+
+                            const newTimeSettingsData = state.timeSettingsData;
+                            newTimeSettingsData[state.userId] = newTableData;
+                            props.onChange({ type: pageName, id: state.userId }, newTableData);
+
+                            setState(prevState => {
+                                return {
+                                    ...prevState,
+                                    timeSettingsData: newTimeSettingsData,
+                                    tableData: newTableData
+                                };
+                            });
                         }
                     }
                     validationUpdate={validation}
@@ -463,9 +493,13 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
                                 alert('1件目は削除できません。');
                                 return false;
                             }
-                            tableData.splice(id);
-                            setTableData([...tableData]);
-                            props.onChange({ type: pageName, id }, tableData);
+
+                            const newTableData = state.tableData;
+                            newTableData.splice(id);
+
+                            const newTimeSettingsData = state.timeSettingsData;
+                            newTimeSettingsData[state.userId] = newTableData;
+                            props.onChange({ type: pageName, id }, newTableData);
                         }
                     }
                 />

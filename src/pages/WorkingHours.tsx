@@ -21,29 +21,36 @@ const useStyle = makeStyles(() => createStyles({
 export function WorkingHours(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
     const classes = useStyle();
     const pageName = 'WorkingHours';
-    const [sheetId, setSheetId] = useState(props.user.WorkingHoursSheetId);
     const date = new Date();
     date.setDate(1);
-    const [targetYearMonth, setTargetYearMonth] = useState(date);
-    const [userList, setUserList] = useState([]);
-    const [workingHoursData, setWorkingHoursData] = useState({});
-    const [tableData, setTableData] = useState([]);
-    const [loadFlag, setLoadFlag] = useState(false);
+    const [state, setState] = useState({
+        targetYearMonth: date,
+        sheetId: props.user.WorkingHoursSheetId,
+        workingHoursData: [],
+        tableData: [],
+        userList: [],
+        loadFlag: false
+    });
 
     useEffect(() => {
-        const yearMonth = targetYearMonth.getFullYear() + ('0' + (targetYearMonth.getMonth() + 1)).slice(-2);
+        const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
 
         google.script.run
             .withSuccessHandler((result: any) => {
-                setWorkingHoursData(result.data); // 全データ保持
-                setTableData(result.data[yearMonth] || []); // 対象年月の情報を一覧に設定
-                setUserList(result.users); // 社員一覧を設定
-                setLoadFlag(true);
+                setState(prevState => {
+                    return {
+                        ...prevState,
+                        workingHoursData: result.data || {},
+                        tableData: result.data[yearMonth] || [],
+                        userList: result.users || [],
+                        loadFlag: true
+                    };
+                });
             })
             .withFailureHandler((error: { message: any; }) => {
                 alert(error.message);
             })
-            .getPageData(sheetId, { role: props.user.role, type: pageName });
+            .getPageData(state.sheetId, { role: props.user.role, type: pageName });
     }, []);
 
     const headers = [
@@ -51,7 +58,7 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
             title: '日付',
             field: 'date',
             render: ({ date }) => {
-                const dayOfWeek = (new Date(targetYearMonth.getFullYear(), targetYearMonth.getMonth(), date)).getDay();
+                const dayOfWeek = (new Date(state.targetYearMonth.getFullYear(), state.targetYearMonth.getMonth(), date)).getDay();
                 if (dayOfWeek === 6) {
                     return <Box color="primary.main">{date}</Box>
                 } else if (dayOfWeek === 0) {
@@ -104,23 +111,32 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
 
     // 前月/今月ボタン押下時
     function handleChangeMonth(isNext: boolean) {
-        const month = targetYearMonth.getMonth() + (isNext ? 1 : -1);
-        const newDate = new Date(targetYearMonth.getFullYear(), month, 1);
-        setTargetYearMonth(newDate);
-
+        const month = state.targetYearMonth.getMonth() + (isNext ? 1 : -1);
+        const newDate = new Date(state.targetYearMonth.getFullYear(), month, 1);
         const yearMonth = newDate.getFullYear() + ('0' + (newDate.getMonth() + 1)).slice(-2);
-        setTableData(workingHoursData[yearMonth] || []);
+
+        setState(prevState => {
+            return {
+                ...prevState,
+                targetYearMonth: newDate,
+                tableData: prevState.workingHoursData[yearMonth] || []
+            };
+        });
     }
 
     // 社員変更時
     async function handleChangeUser(selectedSheetId: string) {
-        setSheetId(selectedSheetId);
-
-        const yearMonth = targetYearMonth.getFullYear() + ('0' + (targetYearMonth.getMonth() + 1)).slice(-2);
+        const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
         google.script.run
             .withSuccessHandler((result: any) => {
-                setWorkingHoursData(result.data); // 全データ保持
-                setTableData(result.data[yearMonth]); // 対象年月の情報を一覧に設定
+                setState(prevState => {
+                    return {
+                        ...prevState,
+                        sheetId: selectedSheetId,
+                        workingHoursData: result.data || {},
+                        tableData: result.data[yearMonth] || []
+                    };
+                });
             })
             .withFailureHandler((error: { message: any; }) => {
                 alert(error.message);
@@ -138,7 +154,7 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
 
     return (
         <div>
-            <CircleLoading {...{ watch: loadFlag }} />
+            <CircleLoading {...{ watch: state.loadFlag }} />
             <Header />
 
             <Box m={2}>
@@ -162,7 +178,7 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
                                         }}
                                     >
                                         {
-                                            userList.map((d: { sheetId: string; name: string; }) =>
+                                            state.userList.map((d: { sheetId: string; name: string; }) =>
                                                 <MenuItem key={d.name} value={d.sheetId}>{d.name}</MenuItem>
                                             )
                                         }
@@ -174,9 +190,9 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
                     }
                 </Grid>
                 <EditableTable
-                    title={(targetYearMonth.getMonth() + 1) + '月'}
+                    title={(state.targetYearMonth.getMonth() + 1) + '月'}
                     header={headers}
-                    data={tableData}
+                    data={state.tableData}
                     options={{
                         pageSize: 10,
                         search: false,
@@ -186,14 +202,22 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
                     handleUpdate={
                         (newData, oldData) => {
                             delete newData.tableData;
+                            const newTableData = state.tableData;
                             newData.isChange = true;
-                            tableData[oldData.tableData.id] = newData;
-                            setTableData([...tableData]);
-                    
-                            const yearMonth = targetYearMonth.getFullYear() + ('0' + (targetYearMonth.getMonth() + 1)).slice(-2);
-                            workingHoursData[yearMonth] = tableData;
-                            setWorkingHoursData(workingHoursData);
-                            props.onChange({ type: pageName, sheetId: sheetId, yearMonth }, tableData);
+                            newTableData[oldData.tableData.id] = newData;
+
+                            const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
+                            const newWorkingHoursData = state.workingHoursData;
+                            newWorkingHoursData[yearMonth] = newTableData;
+                            props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, newTableData);
+
+                            setState(prevState => {
+                                return {
+                                    ...prevState,
+                                    expensesData: newWorkingHoursData,
+                                    tableData: newTableData
+                                };
+                            });
                         }
                     }
                 />

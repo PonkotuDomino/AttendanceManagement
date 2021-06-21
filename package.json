@@ -8,12 +8,8 @@
     "prodBuild": "SET NODE_ENV=production && webpack",
     "devDebug": "SET NODE_ENV=development && webpack-dev-server --hot",
     "prodDebug": "SET NODE_ENV=production && webpack-dev-server --hot",
-    "devWatch": "SET NODE_ENV=development && webpack -w",
-    "prodWatch": "SET NODE_ENV=production && webpack -w",
-    "devClaspPush": "SET NODE_ENV=development && webpack && clasp push --force && clasp open",
-    "prodClaspPush": "SET NODE_ENV=production && webpack && clasp push --force && clasp open",
-    "claspPush": "clasp push --force && clasp open",
-    "claspCreate": "clasp create --rootDir .\\dist"
+    "buildAndClaspPush": "SET NODE_ENV=production && webpack && clasp push --force && clasp open",
+    "claspPush": "clasp push --force && clasp open"
   },
   "author": "mat",
   "license": "MIT",

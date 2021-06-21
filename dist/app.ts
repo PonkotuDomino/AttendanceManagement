@@ -52,7 +52,7 @@ function getPageData(sheetId: string, conditions?: any): any {
 function getUsers(type: string): any {
     const spreadsheet = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
     const sheet = spreadsheet.getSheetByName('0');
-    const cell = sheet.getRange(11, 1, sheet.getLastRow() - 10, 2);
+    const cell = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2);
     const data = (cell.getValues() || []).map(d => JSON.parse(d[1]));
     return type === 'TimeSettings'
         ? data.map(d => { return { id: d['id'], name: d.name }; })
@@ -235,4 +235,10 @@ function createExpensesSheet(data: any, year: string, wareki: string, name: stri
 }
 
 // 出退勤リセットバッチ処理
-// 毎日深夜2時くらい？
+// 毎日早朝6時くらい？
+function resetCommuting(){
+    // ユーザマスタ取得
+    const spreadsheet = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
+    const sheet = spreadsheet.getSheetByName('0');
+    const cell = sheet.getRange("B2:B" + sheet.getLastRow());
+}
