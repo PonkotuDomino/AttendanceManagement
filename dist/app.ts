@@ -236,9 +236,29 @@ function createExpensesSheet(data: any, year: string, wareki: string, name: stri
 
 // 出退勤リセットバッチ処理
 // 毎日早朝6時くらい？
-function resetCommuting(){
+function resetCommuting() {
     // ユーザマスタ取得
-    const spreadsheet = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
-    const sheet = spreadsheet.getSheetByName('0');
-    const cell = sheet.getRange("B2:B" + sheet.getLastRow());
+    const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
+    const userMasterSheet = userMasterSS.getSheetByName('0');
+    const userMasterCells = userMasterSheet.getRange("B2:B" + userMasterSheet.getLastRow());
+    const userMasterData = (userMasterCells.getValues() || []).map(d => JSON.parse(d[0]));
+    for (let index = 0; index < userMasterData.length; index++) {
+        const userData = userMasterData[index];
+        if (userData.commuting) {
+            userData.commuting = false;
+            userMasterSheet.getRange("B" + (index + 2)).setValue(JSON.stringify(userData));
+
+            const workingHoursSS = SpreadsheetApp.openById(userData.WorkingHoursSheetId);
+            const workingHoursSheet = workingHoursSS.getSheetByName('0');
+            const date = new Date();
+            const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
+            const workingHoursTextFinder = workingHoursSheet.createTextFinder(yearMonth);
+            const workingHoursFindNext = workingHoursTextFinder.findNext();
+            const workingHoursCell = workingHoursSheet.getRange('B' + workingHoursFindNext.getRowIndex());
+            const workingHoursData = JSON.parse(workingHoursCell.getValue());
+            workingHoursData[date.getDate() - 2]['end'] = '1800';
+            workingHoursData[date.getDate() - 2]['notes'] = '退勤忘れ ' + workingHoursData[date.getDate() - 2]['notes'];
+            workingHoursCell.setValue(JSON.stringify(workingHoursData));
+        }
+    }
 }

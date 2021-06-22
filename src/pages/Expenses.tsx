@@ -69,9 +69,11 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
         thisYearMonthData.push(data);
         props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, thisYearMonthData);
 
+        state.expensesData[yearMonth] = thisYearMonthData;
         setState(prevState => {
             return {
                 ...prevState,
+                expensesData: state.expensesData,
                 tableData: ((thisMonth.getMonth() === state.targetYearMonth.getMonth()) ? [...thisYearMonthData] : [...state.tableData]) || []
             };
         });
@@ -115,11 +117,20 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
     }
 
     function createExpensesSheet() {
-        // ローカルデバッグ用
-        // alert('作成しました。');
-
-        // TODO
-        alert('未実装');
+        const wareki = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'narrow' }).format(state.targetYearMonth);
+        google.script.run
+            .withSuccessHandler((url: string) => {
+                if (url) {
+                    window.open(url);
+                    alert('作成しました。');
+                } else {
+                    alert('エラーが発生しました。フォルダを確認してください。');
+                }
+            })
+            .withFailureHandler((error: { message: any; }) => {
+                alert(error.message);
+            })
+            .createExpensesSheet(state.tableData, state.targetYearMonth.getFullYear(), wareki, props.user.name);
     }
 
     // ヘッダ情報設定
@@ -313,9 +324,9 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
                         </Grid>
                         <Grid className={classes.gridItem} style={{ display: meansDetails ? '' : 'none' }} item xs={6} sm={3}>
                             <Controller
-                                name="from"
+                                name="meansDetails"
                                 as={TextField}
-                                rules={{ required: true }}
+                                rules={{ required: meansDetails }}
                                 defaultValue=""
                                 control={control}
                                 label="交通機関"
@@ -340,11 +351,11 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
                                 }
                             />
                         </Grid>
-                        <Grid className={classes.gridItem} item xs={6} sm={3}>
+                        <Grid className={classes.gridItem} style={{ display: meansDetails ? 'none' : '' }} item xs={6} sm={3}>
                             <Controller
                                 name="distance"
                                 as={TextField}
-                                rules={{ required: true }}
+                                rules={{ required: !meansDetails }}
                                 defaultValue=""
                                 control={control}
                                 InputProps={{
