@@ -40,17 +40,24 @@ export function App() {
 
     // 更新処理
     function handleChange(conditions: any, value?: any) {
-        google.script.run
-            .withSuccessHandler(() => {
-                if (conditions.type === 'Commuting') {
-                    userData.commuting = !userData.commuting;
-                    setUserData(userData);
-                }
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .setData(conditions, value);
+        // ローカルデバッグ用
+        alert('更新しました。');
+        if (conditions.type === 'Commuting') {
+            userData.commuting = !userData.commuting;
+            setUserData(userData);
+        }
+
+        // google.script.run
+        //     .withSuccessHandler(() => {
+        //         if (conditions.type === 'Commuting') {
+        //             userData.commuting = !userData.commuting;
+        //             setUserData(userData);
+        //         }
+        //     })
+        //     .withFailureHandler((error: { message: any; }) => {
+        //         alert(error.message);
+        //     })
+        //     .setData(conditions, value);
     }
 
     return (
