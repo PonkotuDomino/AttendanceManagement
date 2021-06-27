@@ -39,7 +39,12 @@ function getUserData(email: string): any {
 
 // ページ描画情報の取得
 function getPageData(sheetId: string, conditions?: any): any {
-    const spreadsheet = SpreadsheetApp.openById((conditions && (conditions.type === 'TimeSettings')) ? '19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU' : sheetId);
+    const spreadsheetId = (conditions && (conditions.type === 'TimeSettings'))
+        ? '19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU'
+        : (conditions && (conditions.type === 'UserMaster'))
+            ? '1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk'
+            : sheetId;
+    const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
     const sheet = spreadsheet.getSheetByName('0');
     const cell = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2);
 
@@ -54,9 +59,9 @@ function getUsers(type: string): any {
     const spreadsheet = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
     const sheet = spreadsheet.getSheetByName('0');
     const cell = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2);
-    const data = (cell.getValues() || []).map(d => JSON.parse(d[1]));
+    const data = (cell.getValues() || []).map(d => JSON.parse({ ...d[1], email: d[0] }));
     return type === 'TimeSettings'
-        ? data.map(d => { return { id: d['id'], name: d.name }; })
+        ? data.map(d => { return { id: d['id'], name: d.name, email: d.email }; })
         : data.map(d => { return { sheetId: d[type + 'SheetId'], name: d.name }; });
 }
 
@@ -83,6 +88,8 @@ function setData(conditions: any, value?: any): void {
     } else if (conditions.type === 'Expenses') {
         changeExpenses(conditions.sheetId, conditions.yearMonth, value);
     } else if (conditions.type === 'TimeSettingsMaster') {
+        changeTimeSettingsMaster(conditions.id, value)
+    } else if (conditions.type === 'UserMaster') {
         changeTimeSettingsMaster(conditions.id, value)
     }
 }
@@ -173,6 +180,48 @@ function changeTimeSettingsMaster(id: string, value: any): void {
         throw new Error('時間設定マスタに登録されていません。システム管理者に確認してください。');
     }
     timeSettingsMasterSheet.getRange('B' + timeSettingsMasterFindNext.getRowIndex()).setValue(JSON.stringify(value));
+}
+
+// ユーザマスタ更新
+function changeUserMaster(email: string, value: any): void {
+    // 出退勤状態設定
+    const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
+    const userMasterSheet = userMasterSS.getSheetByName('0');
+    const userMasterTextFinder = userMasterSheet.createTextFinder(email);
+    const userMasterFindNext = userMasterTextFinder.findNext();
+    if (!userMasterFindNext) {
+        const lastRowIndex = userMasterSheet.getLastRow() + 1;
+        userMasterSheet.getRange('A' + lastRowIndex).setValue(email);
+
+        // ひな形からコピーして作成する
+        const WorkingHoursSheetId = ''/* 新規作成処理 */;
+        const ExpensesSheetId = ''/* 新規作成処理 */;
+        const PaidHolidaySheetId = ''/* 新規作成処理 */;
+        const TimeSettingsSheetId = ''/* 新規作成処理 */;
+
+        const userData = {
+            id: value.id,  // id
+            name: value.name,  // 名前
+            role: +value.role,  // 権限
+            commuting: false,  // 出勤有無
+            paidHolidayTotalTime: +value.paidHolidayTotalTime,  // 有給残時間
+            WorkingHoursSheetId,
+            ExpensesSheetId,
+            PaidHolidaySheetId,
+            TimeSettingsSheetId,
+        };
+        userMasterSheet.getRange('B' + lastRowIndex).setValue(JSON.stringify(userData));
+    } else {
+        const userMasterCell = userMasterSheet.getRange('B' + userMasterFindNext.getRowIndex());
+        const userMasterData = JSON.parse(userMasterCell.getValue());
+        userMasterData[email] = {
+            ...userMasterData,
+            name: value.name,  // 名前
+            role: +value.role,  // 権限
+            paidHolidayTotalTime: +value.paidHolidayTotalTime,  // 有給残時間
+        };
+        userMasterCell.setValue(JSON.stringify(userMasterData));
+    }
 }
 
 function createExpensesSheet(data: any, year: string, wareki: string, name: string): string {

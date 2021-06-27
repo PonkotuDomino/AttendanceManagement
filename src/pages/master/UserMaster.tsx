@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Box, Button, createStyles, Divider, Grid, InputAdornment, InputLabel, makeStyles, MenuItem, Select, TextField } from "@material-ui/core";
+import { Box, Button, createStyles, Grid, InputLabel, makeStyles, MenuItem, Select, TextField } from "@material-ui/core";
 import { CircleLoading } from "../../components/CircleLoading";
-import { CustomDatePicker } from "../../components/CustomDatePicker";
-import { EditableTable } from "../../components/EditableTable";
 import { Header } from "../../components/Header";
 import { google } from "../../main";
 
+// ローカルデバッグ用
+import { userMasterJson } from "../../debugData/userMasterJson";
+
 const useStyle = makeStyles(() => createStyles({
-    changeMonthButton: {
-        margin: '10px 0',
-    },
-    printButton: {
-        margin: '10px 0 10px 20px',
-    },
     gridItem: {
         marginBottom: '10px'
     },
@@ -25,461 +20,214 @@ const useStyle = makeStyles(() => createStyles({
 export function UserMaster(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
     const classes = useStyle();
     const pageName = 'Expenses';
-    const { handleSubmit, control, errors } = useForm();
-    const [meansDetails, displayMeansDetails] = useState(false);
-    const date = new Date();
-    date.setDate(1);
+    const { handleSubmit, control, errors, setValue } = useForm();
     const [state, setState] = useState({
-        targetYearMonth: date,
-        sheetId: props.user.ExpensesSheetId,
-        expensesData: [],
-        tableData: [],
+        id: '',
+        userMasterData: {},
         userList: [],
         loadFlag: false
     });
 
     // レンダリング完了後に実行する
     useEffect(() => {
-        const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
+        // ローカルデバッグ用
+        const userList = Object.entries(userMasterJson).map(x => { return { ...x[1], email: x[0] } });
+        setState(prevState => {
+            return {
+                ...prevState,
+                id: '',
+                userMasterData: userMasterJson || {},
+                userList: userList || [],
+                loadFlag: true
+            };
+        });
 
-        google.script.run
-            .withSuccessHandler((result: any) => {
-                setState(prevState => {
-                    return {
-                        ...prevState,
-                        expensesData: result.data || {},
-                        tableData: result.data[yearMonth] || [],
-                        userList: result.users || [],
-                        loadFlag: true
-                    };
-                });
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .getPageData(state.sheetId, { role: props.user.role, type: pageName });
+        // google.script.run
+        //     .withSuccessHandler((result: any) => {
+        //         setState(prevState => {
+        //             return {
+        //                 ...prevState,
+        //                 id: '',
+        //                 userMasterData: result.data || {},
+        //                 userList: result.users || [],
+        //                 loadFlag: true
+        //             };
+        //         });
+        //     })
+        //     .withFailureHandler((error: { message: any; }) => {
+        //         alert(error.message);
+        //     })
+        //     .getPageData('', { role: props.user.role, type: pageName });
     }, []);
 
-    // 追加ボタン押下時
+    // 追加/更新ボタン押下時
     function handleClickAdd(data: any) {
-        const thisMonth = new Date();
-        const yearMonth = thisMonth.getFullYear() + ('0' + (thisMonth.getMonth() + 1)).slice(-2);
-        const thisYearMonthData = state.expensesData[yearMonth] || [];
-        data["no"] = thisYearMonthData.length + 1;
-        thisYearMonthData.push(data);
-        props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, thisYearMonthData);
+        setValue('inputId', data.inputId || '');
+        setValue('inputEmail', data.inputEmail || '');
 
-        state.expensesData[yearMonth] = thisYearMonthData;
+        let userData = state.userMasterData[data.email];
+        if (state.id) {
+            userData = {
+                ...userData,
+                name: data.name,
+                role: data.role,
+                paidHolidayTotalTime: data.paidHolidayTotalTime
+            };
+        } else {
+            userData = {
+                id: data.inputId,
+                email: data.inputEmail,
+                name: data.name,
+                role: data.role,
+                paidHolidayTotalTime: data.paidHolidayTotalTime
+            };
+        }
+        state.userMasterData[data.email] = userData;
         setState(prevState => {
             return {
                 ...prevState,
-                expensesData: state.expensesData,
-                tableData: ((thisMonth.getMonth() === state.targetYearMonth.getMonth()) ? [...thisYearMonthData] : [...state.tableData]) || []
+                id: data.inputId,
+                userMasterData: state.userMasterData
             };
         });
 
-        alert('追加しました。');
-    }
-
-    // 前月/今月ボタン押下時
-    function handleChangeMonth(isNext: boolean) {
-        const month = state.targetYearMonth.getMonth() + (isNext ? 1 : -1);
-        const newDate = new Date(state.targetYearMonth.getFullYear(), month, 1);
-        const yearMonth = newDate.getFullYear() + ('0' + (newDate.getMonth() + 1)).slice(-2);
-
-        setState(prevState => {
-            return {
-                ...prevState,
-                targetYearMonth: newDate,
-                tableData: prevState.expensesData[yearMonth] || []
-            };
-        });
+        props.onChange({ type: pageName }, userData);
     }
 
     // 社員変更時
-    function handleChangeUser(selectedSheetId: string) {
-        const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-        google.script.run
-            .withSuccessHandler((result: any) => {
-                setState(prevState => {
-                    return {
-                        ...prevState,
-                        sheetId: selectedSheetId,
-                        expensesData: result.data || {},
-                        tableData: result.data[yearMonth] || []
-                    };
-                });
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .getPageData(selectedSheetId);
+    function handleChangeUser(email: string) {
+        const user = state.userMasterData[email] || {};
+        setState(prevState => {
+            return {
+                ...prevState,
+                id: user.id
+            };
+        });
+
+        // form内の値を更新
+        setValue('inputId', user.id || '');
+        setValue('inputEmail', email || '');
+        setValue('name', user.name || '');
+        setValue('role', (user.role || 0) + '');
+        setValue('paidHolidayTotalTime', user.paidHolidayTotalTime || '');
+        setValue('isAdd', !!user.id);
     }
-
-    function createExpensesSheet() {
-        const wareki = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'narrow' }).format(state.targetYearMonth);
-        google.script.run
-            .withSuccessHandler((url: string) => {
-                if (url) {
-                    window.open(url);
-                    alert('作成しました。');
-                } else {
-                    alert('エラーが発生しました。フォルダを確認してください。');
-                }
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .createExpensesSheet(state.tableData, state.targetYearMonth.getFullYear(), wareki, props.user.name);
-    }
-
-    // ヘッダ情報設定
-    const headers = [
-        {
-            title: '番号',
-            field: 'no',
-            editable: 'never',
-            initialEditValue: state.tableData.length
-        },
-        {
-            title: '日付',
-            field: 'day',
-            editComponent: ({ value, onChange }) => (<CustomDatePicker value={value} onChange={onChange} mode={'date'} targetMonth={state.targetYearMonth} />)
-        },
-        {
-            title: '訪問先',
-            field: 'destination',
-            validate: ({ destination }) => {
-                if (!destination) {
-                    return '必須入力';
-                }
-
-                return true;
-            }
-        },
-        {
-            title: '目的・備考',
-            field: 'details',
-            validate: ({ details }) => {
-                if (!details) {
-                    return '必須入力';
-                }
-
-                return true;
-            }
-        },
-        {
-            title: '手段',
-            field: 'means',
-            lookup: { 0: '自家用車', 1: '公共機関' },
-            initialEditValue: 0
-        },
-        {
-            title: '交通機関',
-            field: 'meansDetails',
-            validate: ({ means, meansDetails }) => {
-                if ((means === 1) && !meansDetails) {
-                    return '必須入力';
-                }
-
-                return true;
-            }
-        },
-        {
-            title: '交通ルート(From)',
-            field: 'from',
-            validate: ({ from }) => {
-                if (!from) {
-                    return '必須入力';
-                }
-
-                return true;
-            }
-        },
-        {
-            title: '交通ルート(To)',
-            field: 'to',
-            validate: ({ to }) => {
-                if (!to) {
-                    return '必須入力';
-                }
-
-                return true;
-            }
-        },
-        {
-            title: '往復',
-            field: 'trip',
-            lookup: { 0: '往復', 1: '片道' },
-            initialEditValue: 0
-        },
-        {
-            title: '距離(Km)',
-            field: 'distance',
-            type: 'numeric'
-        },
-        {
-            title: '金額',
-            field: 'amount',
-            type: 'numeric',
-            validate: ({ amount }) => {
-                if (!amount) {
-                    return '必須入力';
-                }
-
-                return true;
-            }
-        },
-        {
-            title: '上長確認',
-            field: 'isConfirmed',
-            type: 'boolean',
-            editable: 'always' /* 権限によって変える */
-        },
-    ];
 
     return (
-        <div>
+        <>
             <CircleLoading {...{ watch: state.loadFlag }} />
+            <Header user={props.user} />
 
             <Box m={2}>
                 <form onSubmit={handleSubmit(handleClickAdd)} autoComplete="off">
                     <Grid container spacing={1}>
-                        <Grid className={classes.gridItem} item xs={3}>
+                        <Grid className={classes.gridItem} item sm={3}>
+                            <InputLabel id="select-email-label">社員ID</InputLabel>
                             <Controller
-                                name="day"
-                                defaultValue={state.targetYearMonth.getDate()}
-                                control={control}
-                                render={props =>
-                                    <CustomDatePicker value={props.value} onChange={props.onChange} mode={'date'} label="日付" />
-                                }
-                            />
-                        </Grid>
-                        <Grid className={classes.gridItem} item xs={8} sm={3}>
-                            <Controller
-                                name="destination"
-                                as={TextField}
-                                rules={{ required: true }}
+                                name="email"
                                 defaultValue=""
-                                control={control}
-                                label="訪問先"
-                            />
-                            {errors.destination && <div className={classes.errorMessage}>必須入力</div>}
-                        </Grid>
-                        <Grid className={classes.gridItem} item xs={12} sm={6}>
-                            <Controller
-                                name="details"
-                                as={TextField}
-                                rules={{ required: true }}
-                                defaultValue=""
-                                control={control}
-                                fullWidth
-                                label="目的・備考"
-                            />
-                            {errors.details && <div className={classes.errorMessage}>必須入力</div>}
-                        </Grid>
-                        <Grid className={classes.gridItem} item xs={6} sm={3}>
-                            <Controller
-                                name="from"
-                                as={TextField}
-                                rules={{ required: true }}
-                                defaultValue=""
-                                control={control}
-                                label="交通ルート(From)"
-                            />
-                            {errors.from && <div className={classes.errorMessage}>必須入力</div>}
-                        </Grid>
-                        <Grid className={classes.gridItem} item xs={6} sm={3}>
-                            <Controller
-                                name="to"
-                                as={TextField}
-                                rules={{ required: true }}
-                                defaultValue=""
-                                control={control}
-                                label="交通ルート(To)"
-                            />
-                            {errors.to && <div className={classes.errorMessage}>必須入力</div>}
-                        </Grid>
-                        <Grid className={classes.gridItem} item xs={6} sm={3}>
-                            <InputLabel id="select-means-label">手段</InputLabel>
-                            <Controller
-                                name="means"
-                                defaultValue="0"
                                 control={control}
                                 render={props =>
                                     <Select
-                                        defaultValue="0"
-                                        labelId="select-means-label"
+                                        autoWidth
+                                        value={props.value}
+                                        displayEmpty
+                                        labelId="select-email-label"
                                         onChange={e => {
+                                            handleChangeUser(e.target.value as string);
                                             props.onChange(e);
-                                            displayMeansDetails(e.target.value === '1');
                                         }}
                                     >
-                                        <MenuItem value={'0'}>自家用車</MenuItem>
-                                        <MenuItem value={'1'}>公共機関</MenuItem>
+                                        <MenuItem value="">
+                                            <span>新規追加</span>
+                                        </MenuItem>
+                                        {
+                                            state.userList.map((d: { email: string; id: string; }) =>
+                                                <MenuItem key={d.id} value={d.email}>{d.id}</MenuItem>
+                                            )
+                                        }
                                     </Select>
                                 }
                             />
                         </Grid>
-                        <Grid className={classes.gridItem} style={{ display: meansDetails ? '' : 'none' }} item xs={6} sm={3}>
+                        <Grid className={classes.gridItem} style={{ display: state.id ? 'none' : '' }} item sm={3}>
                             <Controller
-                                name="meansDetails"
+                                name="inputId"
                                 as={TextField}
-                                rules={{ required: meansDetails }}
+                                rules={{ required: !state.id }}
                                 defaultValue=""
                                 control={control}
-                                label="交通機関"
+                                label="社員ID入力"
                             />
-                            {errors.from && (control.getValues().means === '1') && <div className={classes.errorMessage}>必須入力</div>}
+                            {errors.inputId && !state.id && <div className={classes.errorMessage}>必須入力</div>}
                         </Grid>
-                        <Grid className={classes.gridItem} item xs={6} sm={3}>
-                            <InputLabel id="select-trip-label">往復</InputLabel>
+                        <Grid className={classes.gridItem} style={{ display: state.id ? 'none' : '' }} item sm={3}>
                             <Controller
-                                name="trip"
-                                defaultValue="0"
-                                control={control}
-                                render={props =>
-                                    <Select
-                                        defaultValue="0"
-                                        labelId="select-trip-label"
-                                        onChange={e => props.onChange(e)}
-                                    >
-                                        <MenuItem value={"0"}>往復</MenuItem>
-                                        <MenuItem value={"1"}>片道</MenuItem>
-                                    </Select>
-                                }
-                            />
-                        </Grid>
-                        <Grid className={classes.gridItem} style={{ display: meansDetails ? 'none' : '' }} item xs={6} sm={3}>
-                            <Controller
-                                name="distance"
+                                name="inputEmail"
                                 as={TextField}
-                                rules={{ required: !meansDetails }}
+                                rules={{ required: !state.id }}
                                 defaultValue=""
                                 control={control}
-                                InputProps={{
-                                    endAdornment: <InputAdornment position="end">km</InputAdornment>,
-                                }}
-                                label="距離"
-                                type="number"
+                                label="メールアドレス入力"
                             />
-                            {errors.distance && <div className={classes.errorMessage}>必須入力</div>}
+                            {errors.inputEmail && !state.id && <div className={classes.errorMessage}>必須入力</div>}
                         </Grid>
-                        <Grid className={classes.gridItem} item xs={6} sm={3}>
+                    </Grid>
+                    <Grid container spacing={1}>
+                        <Grid className={classes.gridItem} item sm={3}>
                             <Controller
-                                name="amount"
+                                name="name"
                                 as={TextField}
                                 rules={{ required: true }}
                                 defaultValue=""
                                 control={control}
-                                InputProps={{
-                                    endAdornment: <InputAdornment position="end">円</InputAdornment>,
-                                }}
-                                label="金額"
-                                type="number"
+                                label="社員名"
                             />
-                            {errors.amount && <div className={classes.errorMessage}>必須入力</div>}
+                            {errors.name && <div className={classes.errorMessage}>必須入力</div>}
                         </Grid>
                     </Grid>
-                    <Grid container direction="column" alignItems="flex-end">
-                        <Grid item xs>
-                            <Button type="submit" variant="contained" color="primary">追加</Button>
+                    <Grid container spacing={1}>
+                        <Grid className={classes.gridItem} item sm={3}>
+                            <InputLabel id="select-role-label">権限</InputLabel>
+                            <Controller
+                                name="role"
+                                defaultValue="0"
+                                control={control}
+                                render={props =>
+                                    <Select
+                                        value={props.value}
+                                        labelId="select-role-label"
+                                        onChange={e => props.onChange(e)}
+                                    >
+                                        <MenuItem value="0">システム管理者</MenuItem>
+                                        <MenuItem value="1">一般社員</MenuItem>
+                                        <MenuItem value="2">管理職</MenuItem>
+                                    </Select>
+                                }
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={1}>
+                        <Grid className={classes.gridItem} item sm={3}>
+                            <Controller
+                                name="paidHolidayTotalTime"
+                                as={TextField}
+                                rules={{ required: true }}
+                                defaultValue=""
+                                control={control}
+                                label="有給残時間"
+                                type="number"
+                            />
+                            {errors.paidHolidayTotalTime && <div className={classes.errorMessage}>必須入力</div>}
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={1}>
+                        <Grid className={classes.gridItem} item sm={3}>
+                            <Button type="submit" variant="contained" color="primary">{state.id ? '更新' : '追加'}</Button>
                         </Grid>
                     </Grid>
                 </form>
             </Box>
-
-            <Divider variant="middle" />
-
-            <Box m={2}>
-                <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={6}>
-                        <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" onClick={() => handleChangeMonth(false)}>前月</Button>
-                        <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" style={{ marginLeft: '10px' }} onClick={() => handleChangeMonth(true)}>翌月</Button>
-                    </Grid>
-                    {
-                        props.user.role === 0
-                            ? (
-                                <Grid item xs={6}>
-                                    <InputLabel id="select-users-label">社員</InputLabel>
-                                    <Select
-                                        autoWidth
-                                        defaultValue={props.user.ExpensesSheetId}
-                                        labelId="select-users-label"
-                                        onChange={e => {
-                                            // name の設定
-                                            handleChangeUser(e.target.value as string);
-                                        }}
-                                    >
-                                        {
-                                            state.userList.map((d: { sheetId: string; name: string; }) =>
-                                                <MenuItem key={d.name} value={d.sheetId}>{d.name}</MenuItem>
-                                            )
-                                        }
-                                    </Select>
-                                    <Button className={classes.printButton} size="large" color="primary" variant="contained" onClick={() => createExpensesSheet()}>印刷</Button>
-                                </Grid>
-                            )
-                            : ''
-                    }
-                </Grid>
-                <EditableTable
-                    title={`交通費精算(${state.targetYearMonth.getFullYear()}年${(state.targetYearMonth.getMonth() + 1)}月)`}
-                    header={headers}
-                    data={state.tableData}
-                    options={{
-                        pageSize: 5,
-                        search: false,
-                        headerStyle: { width: 'auto', whiteSpace: 'nowrap' },
-                        cellStyle: { width: 'auto', whiteSpace: 'nowrap' },
-                    }}
-                    isEditable={
-                        rowData => !rowData.isConfirmed
-                    }
-                    isDeletable={
-                        rowData => !rowData.isConfirmed
-                    }
-                    handleUpdate={
-                        (newData, oldData) => {
-                            delete newData.tableData;
-                            const newTableData = state.tableData;
-                            newTableData[oldData.tableData.id] = newData;
-
-                            const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-                            const newExpensesData = state.expensesData;
-                            newExpensesData[yearMonth] = newTableData;
-                            props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, newTableData);
-
-                            setState(prevState => {
-                                return {
-                                    ...prevState,
-                                    expensesData: newExpensesData,
-                                    tableData: newTableData
-                                };
-                            });
-                        }
-                    }
-                    handleDelete={
-                        (oldData) => {
-                            const newTableData = state.tableData;
-                            newTableData.splice(oldData.tableData.id);
-
-                            const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-                            const newExpensesData = state.expensesData;
-                            newExpensesData[yearMonth] = newTableData;
-                            props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, newTableData);
-
-                            setState(prevState => {
-                                return {
-                                    ...prevState,
-                                    expensesData: newExpensesData,
-                                    tableData: newTableData
-                                };
-                            });
-                        }
-                    }
-                />
-            </Box>
-        </div>
+        </>
     );
 }
