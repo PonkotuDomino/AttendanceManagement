@@ -8,6 +8,7 @@ function doGet() {
 }
 
 // 初期処理
+// 初期表示時のログインユーザ情報を取得
 function getInitData(): any {
     const email = Session.getActiveUser().getEmail();
     if (!email || email.split('@')[1] !== 'mat-ltd.co.jp') {
@@ -68,6 +69,7 @@ function convertArrayToObject(values: string | any[]): any {
     return data;
 }
 
+// データ更新
 function setData(conditions: any, value?: any): void {
     const email = Session.getActiveUser().getEmail();
     if (!conditions && (!email || email.split('@')[1] !== 'mat-ltd.co.jp')) {
@@ -80,13 +82,13 @@ function setData(conditions: any, value?: any): void {
         changeWorkingHours(conditions.sheetId, conditions.yearMonth, value);
     } else if (conditions.type === 'Expenses') {
         changeExpenses(conditions.sheetId, conditions.yearMonth, value);
-    } else if (conditions.type === 'TimeSettings') {
-        changeTimeSettings(conditions.id, value)
+    } else if (conditions.type === 'TimeSettingsMaster') {
+        changeTimeSettingsMaster(conditions.id, value)
     }
 }
 
 // 出退勤状態更新
-function changeCommuting(email: string) {
+function changeCommuting(email: string): void {
     // 出退勤状態設定
     const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
     const userMasterSheet = userMasterSS.getSheetByName('0');
@@ -134,7 +136,7 @@ function changeCommuting(email: string) {
 }
 
 // 出退勤表更新
-function changeWorkingHours(sheetId: string, yearMonth: string, value: any) {
+function changeWorkingHours(sheetId: string, yearMonth: string, value: any): void {
     const workingHoursSS = SpreadsheetApp.openById(sheetId);
     const workingHoursSheet = workingHoursSS.getSheetByName('0');
     const workingHoursTextFinder = workingHoursSheet.createTextFinder(yearMonth);
@@ -146,7 +148,7 @@ function changeWorkingHours(sheetId: string, yearMonth: string, value: any) {
 }
 
 // 交通費精算更新
-function changeExpenses(sheetId: string, yearMonth: string, value: any) {
+function changeExpenses(sheetId: string, yearMonth: string, value: any): void {
     const expensesSS = SpreadsheetApp.openById(sheetId);
     const expensesSheet = expensesSS.getSheetByName('0');
     const expensesTextFinder = expensesSheet.createTextFinder(yearMonth);
@@ -161,19 +163,19 @@ function changeExpenses(sheetId: string, yearMonth: string, value: any) {
 }
 
 // 時間設定マスタ更新
-function changeTimeSettings(id: string, value: any) {
+function changeTimeSettingsMaster(id: string, value: any): void {
     // 出退勤状態設定
-    const timeSettingsSS = SpreadsheetApp.openById('19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU');
-    const timeSettingsSheet = timeSettingsSS.getSheetByName('0');
-    const timeSettingsTextFinder = timeSettingsSheet.createTextFinder(id);
-    const timeSettingsFindNext = timeSettingsTextFinder.findNext();
-    if (!timeSettingsFindNext) {
+    const timeSettingsMasterSS = SpreadsheetApp.openById('19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU');
+    const timeSettingsMasterSheet = timeSettingsMasterSS.getSheetByName('0');
+    const timeSettingsMasterTextFinder = timeSettingsMasterSheet.createTextFinder(id);
+    const timeSettingsMasterFindNext = timeSettingsMasterTextFinder.findNext();
+    if (!timeSettingsMasterFindNext) {
         throw new Error('時間設定マスタに登録されていません。システム管理者に確認してください。');
     }
-    timeSettingsSheet.getRange('B' + timeSettingsFindNext.getRowIndex()).setValue(JSON.stringify(value));
+    timeSettingsMasterSheet.getRange('B' + timeSettingsMasterFindNext.getRowIndex()).setValue(JSON.stringify(value));
 }
 
-function createExpensesSheet(data: any, year: string, wareki: string, name: string) {
+function createExpensesSheet(data: any, year: string, wareki: string, name: string): string {
     const dates = wareki.split('/');
     const original = SpreadsheetApp.openById('1WMAP-LCQPwy_7afhZwpkq2JlgvgPhgNxKnuWbX5tn7A');　// ひな形取得
     const sheetName = original.getName() + '_' + name; // 新しいシート名
@@ -235,8 +237,8 @@ function createExpensesSheet(data: any, year: string, wareki: string, name: stri
 }
 
 // 出退勤リセットバッチ処理
-// 毎日早朝6時くらい？
-function resetCommuting() {
+// 毎日早朝6~7時くらいに実行
+function resetCommuting(): void {
     // ユーザマスタ取得
     const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
     const userMasterSheet = userMasterSS.getSheetByName('0');

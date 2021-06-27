@@ -1,10 +1,8 @@
-// 当システムでは不要
-
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { ErrorPage } from './pages/ErrorPage';
 
-export function Auth(props: { children: any; data: any; }) {
-    return true
+export function Auth(props: { children: any; user: any; }) {
+    return props.user.role === 0
         ? props.children
-        : <Redirect to={'/error'} />;
+        : <ErrorPage />;
 };

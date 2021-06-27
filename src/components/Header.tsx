@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AppBar, Divider, Drawer, List, ListItem, ListItemText, Toolbar, IconButton, Typography, makeStyles, createStyles } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { Link } from "react-router-dom";
+import { Auth } from "../auth";
 
 const drawerWidth = '240px';
 const useStyles = makeStyles(theme => createStyles({
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => createStyles({
     }
 }));
 
-export function Header() {
+export function Header(props: { user: any }) {
     const classes = useStyles();
     const [open, setDrawerOpenState] = useState(false);
     const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent,) => {
@@ -84,11 +85,18 @@ export function Header() {
                             <ListItemText primary={'有給管理'} />
                         </ListItem>
                     </Link>
-                    <Link to="/timeSettings" className={classes.drawerMenu}>
+                    <Link to="/timeSettingsMaster" className={classes.drawerMenu}>
                         <ListItem button>
-                            <ListItemText primary={'設定'} />
+                            <ListItemText primary={'勤務時間設定'} />
                         </ListItem>
                     </Link>
+                    <Auth user={props.user}>
+                        <Link to="/userMaster" className={classes.drawerMenu}>
+                            <ListItem button>
+                                <ListItemText primary={'ユーザマスタ'} />
+                            </ListItem>
+                        </Link>
+                    </Auth>
                 </List>
                 <Divider />
             </Drawer>

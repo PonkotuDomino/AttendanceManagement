@@ -4,12 +4,6 @@ import { Header } from "../components/Header";
 
 // スタイルの指定
 const useStyle = makeStyles(theme => createStyles({
-    headerSpacer: theme.mixins.toolbar,
-    root: {
-        flexGrow: 1,
-        overflow: "hidden",
-        backgroundColor: theme.palette.background.paper,
-    },
     commutingBtn: {
         margin: "10px 0",
     },
@@ -25,12 +19,12 @@ export function Commuting(props: { user: any, onChange: (conditions: any, data?:
     }
 
     return (
-        <div className={classes.root}>
-            <Header />
-
+        <>
+            <Header user={props.user} />
+            
             <Box m={1}>
                 <Button className={classes.commutingBtn} size="large" color="primary" variant="contained" onClick={handleCommutingButtonClick}>{props.user.commuting ? '退勤' : '出勤'}</Button>
             </Box>
-        </div>
+        </>
     );
 }

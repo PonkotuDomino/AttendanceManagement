@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Box, Button, createStyles, Divider, Grid, InputAdornment, InputLabel, makeStyles, MenuItem, Select, TextField } from "@material-ui/core";
-import { CircleLoading } from "../components/CircleLoading";
-import { CustomDatePicker } from "../components/CustomDatePicker";
-import { EditableTable } from "../components/EditableTable";
-import { Header } from "../components/Header";
-import { google } from "../main";
-
-// ローカルデバッグ用
-import { expensesJson } from "../debugData/expensesJson";
-import { userMasterJson } from "../debugData/userMasterJson";
+import { CircleLoading } from "../../components/CircleLoading";
+import { CustomDatePicker } from "../../components/CustomDatePicker";
+import { EditableTable } from "../../components/EditableTable";
+import { Header } from "../../components/Header";
+import { google } from "../../main";
 
 const useStyle = makeStyles(() => createStyles({
     changeMonthButton: {
@@ -26,7 +22,7 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function Expenses(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
+export function UserMaster(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
     const classes = useStyle();
     const pageName = 'Expenses';
     const { handleSubmit, control, errors } = useForm();
@@ -36,7 +32,7 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
     const [state, setState] = useState({
         targetYearMonth: date,
         sheetId: props.user.ExpensesSheetId,
-        expensesData: {},
+        expensesData: [],
         tableData: [],
         userList: [],
         loadFlag: false
@@ -46,34 +42,22 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
     useEffect(() => {
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
 
-        // ローカルデバッグ用
-        const userList = Object.entries(userMasterJson).map(x => x[1]);
-        setState(prevState => {
-            return {
-                ...prevState,
-                expensesData: expensesJson,
-                tableData: expensesJson[yearMonth],
-                userList: userList,
-                loadFlag: true
-            };
-        });
-
-        // google.script.run
-        //     .withSuccessHandler((result: any) => {
-        //         setState(prevState => {
-        //             return {
-        //                 ...prevState,
-        //                 expensesData: result.data || {},
-        //                 tableData: result.data[yearMonth] || [],
-        //                 userList: result.users || [],
-        //                 loadFlag: true
-        //             };
-        //         });
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .getPageData(state.sheetId, { role: props.user.role, type: pageName });
+        google.script.run
+            .withSuccessHandler((result: any) => {
+                setState(prevState => {
+                    return {
+                        ...prevState,
+                        expensesData: result.data || {},
+                        tableData: result.data[yearMonth] || [],
+                        userList: result.users || [],
+                        loadFlag: true
+                    };
+                });
+            })
+            .withFailureHandler((error: { message: any; }) => {
+                alert(error.message);
+            })
+            .getPageData(state.sheetId, { role: props.user.role, type: pageName });
     }, []);
 
     // 追加ボタン押下時
@@ -255,9 +239,8 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
     ];
 
     return (
-        <>
+        <div>
             <CircleLoading {...{ watch: state.loadFlag }} />
-            <Header user={props.user} />
 
             <Box m={2}>
                 <form onSubmit={handleSubmit(handleClickAdd)} autoComplete="off">
@@ -497,6 +480,6 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
                     }
                 />
             </Box>
-        </>
+        </div>
     );
 }

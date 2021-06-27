@@ -1,6 +1,6 @@
 export const userMasterJson = {
     "soya.t@mat-ltd.co.jp": {
-        "id": "soyat",  // id
+        "id": "0010",  // id
         "name": "征矢孝昭",  // 名前
         "role": 0,  // 権限
         "commuting": true,  // 出勤有無

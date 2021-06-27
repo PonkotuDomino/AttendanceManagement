@@ -7,7 +7,8 @@ import { Header } from "../components/Header";
 import { google } from "../main";
 
 // ローカルデバッグ用
-// import workingHoursJson from "../debugData/workingHoursJson";
+import { workingHoursJson } from "../debugData/workingHoursJson";
+import { userMasterJson } from "../debugData/userMasterJson";
 
 const useStyle = makeStyles(() => createStyles({
     changeMonthButton: {
@@ -26,7 +27,7 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
     const [state, setState] = useState({
         targetYearMonth: date,
         sheetId: props.user.WorkingHoursSheetId,
-        workingHoursData: [],
+        workingHoursData: {},
         tableData: [],
         userList: [],
         loadFlag: false
@@ -35,22 +36,34 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
     useEffect(() => {
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
 
-        google.script.run
-            .withSuccessHandler((result: any) => {
-                setState(prevState => {
-                    return {
-                        ...prevState,
-                        workingHoursData: result.data || {},
-                        tableData: result.data[yearMonth] || [],
-                        userList: result.users || [],
-                        loadFlag: true
-                    };
-                });
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .getPageData(state.sheetId, { role: props.user.role, type: pageName });
+        // ローカルデバッグ用
+        const userList = Object.entries(userMasterJson).map(x => x[1]);
+        setState(prevState => {
+            return {
+                ...prevState,
+                workingHoursData: workingHoursJson,
+                tableData: workingHoursJson[yearMonth],
+                userList: userList,
+                loadFlag: true
+            };
+        });
+
+        // google.script.run
+        //     .withSuccessHandler((result: any) => {
+        //         setState(prevState => {
+        //             return {
+        //                 ...prevState,
+        //                 workingHoursData: result.data || {},
+        //                 tableData: result.data[yearMonth] || [],
+        //                 userList: result.users || [],
+        //                 loadFlag: true
+        //             };
+        //         });
+        //     })
+        //     .withFailureHandler((error: { message: any; }) => {
+        //         alert(error.message);
+        //     })
+        //     .getPageData(state.sheetId, { role: props.user.role, type: pageName });
     }, []);
 
     const headers = [
@@ -153,9 +166,9 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
     }
 
     return (
-        <div>
+        <>
             <CircleLoading {...{ watch: state.loadFlag }} />
-            <Header />
+            <Header user={props.user} />
 
             <Box m={2}>
                 <Grid container spacing={1} alignItems="flex-end">
@@ -222,6 +235,6 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
                     }
                 />
             </Box>
-        </div>
+        </>
     );
 }

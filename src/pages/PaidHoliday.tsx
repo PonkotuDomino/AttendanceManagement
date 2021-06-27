@@ -19,11 +19,13 @@ export function PaidHoliday(props: { user: any, onChange: (data: any, conditions
     }, []);
 
     return (
-        <div className={classes.aaa}>
+        <>
             <CircleLoading {...{ watch: loadFlag }} />
-            <Header />
+            <Header user={props.user} />
 
-            有給休暇管理
-        </div>
+            <div className={classes.aaa}>
+                有給休暇管理
+            </div>
+        </>
     );
 };

@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Box, Button, Divider, Grid, createStyles, makeStyles, TextField, InputAdornment, InputLabel, Select, MenuItem } from "@material-ui/core";
-import { CircleLoading } from "../components/CircleLoading";
-import { CustomTimePicker } from "../components/CustomTimePicker";
-import { EditableTable } from "../components/EditableTable";
-import { Header } from "../components/Header";
-import { google } from "../main";
+import { CircleLoading } from "../../components/CircleLoading";
+import { CustomTimePicker } from "../../components/CustomTimePicker";
+import { EditableTable } from "../../components/EditableTable";
+import { Header } from "../../components/Header";
+import { google } from "../../main";
+
+// ローカルデバッグ用
+import { timeSettingsJson } from "../../debugData/timeSettingsJson";
+import { userMasterJson } from "../../debugData/userMasterJson";
 
 const useStyle = makeStyles(() => createStyles({
     gridItem: {
@@ -16,13 +20,13 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function TimeSettings(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
+export function TimeSettingsMaster(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
     const classes = useStyle();
-    const pageName = 'TimeSettings';
+    const pageName = 'TimeSettingsMaster';
     const { handleSubmit, control, errors } = useForm();
     const [state, setState] = useState({
         userId: props.user.id, // 社員ID
-        timeSettingsData: [], // 全データ保持
+        timeSettingsData: {}, // 全データ保持
         tableData: [], // テーブルデータ保持
         userList: [], // 社員一覧を設定
         loadFlag: false // 読み込みフラグ
@@ -30,22 +34,34 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
 
     // レンダリング完了後に実行する
     useEffect(() => {
-        google.script.run
-            .withSuccessHandler((result: any) => {
-                setState(prevState => {
-                    return {
-                        ...prevState,
-                        timeSettingsData: result.data || {},
-                        tableData: result.data[state.userId] || [],
-                        userList: result.users || [],
-                        loadFlag: true
-                    };
-                });
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .getPageData('', { type: pageName });
+        // ローカルデバッグ用
+        const userList = Object.entries(userMasterJson).map(x => x[1]);
+        setState(prevState => {
+            return {
+                ...prevState,
+                timeSettingsData: timeSettingsJson,
+                tableData: timeSettingsJson[state.userId],
+                userList: userList,
+                loadFlag: true
+            };
+        });
+
+        // google.script.run
+        //     .withSuccessHandler((result: any) => {
+        //         setState(prevState => {
+        //             return {
+        //                 ...prevState,
+        //                 timeSettingsData: result.data || {},
+        //                 tableData: result.data[state.userId] || [],
+        //                 userList: result.users || [],
+        //                 loadFlag: true
+        //             };
+        //         });
+        //     })
+        //     .withFailureHandler((error: { message: any; }) => {
+        //         alert(error.message);
+        //     })
+        //     .getPageData('', { type: pageName });
     }, []);
 
     // 追加ボタン押下時
@@ -311,9 +327,9 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
     ];
 
     return (
-        <div>
+        <>
             <CircleLoading {...{ watch: state.loadFlag }} />
-            <Header />
+            <Header user={props.user} />
 
             <Box m={2}>
                 <form onSubmit={handleSubmit(handleClickAdd)} autoComplete="off">
@@ -504,6 +520,6 @@ export function TimeSettings(props: { user: any, onChange: (data: any, condition
                     }
                 />
             </Box>
-        </div>
+        </>
     );
 }
