@@ -19,10 +19,11 @@ const useStyle = makeStyles(() => createStyles({
 
 export function UserMaster(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
     const classes = useStyle();
-    const pageName = 'Expenses';
+    const pageName = 'UserMaster';
     const { handleSubmit, control, errors, setValue } = useForm();
     const [state, setState] = useState({
         id: '',
+        email: '',
         userMasterData: {},
         userList: [],
         loadFlag: false
@@ -47,7 +48,6 @@ export function UserMaster(props: { user: any, onChange: (data: any, conditions?
         //         setState(prevState => {
         //             return {
         //                 ...prevState,
-        //                 id: '',
         //                 userMasterData: result.data || {},
         //                 userList: result.users || [],
         //                 loadFlag: true
@@ -87,6 +87,7 @@ export function UserMaster(props: { user: any, onChange: (data: any, conditions?
             return {
                 ...prevState,
                 id: data.inputId,
+                email: data.inputEmail,
                 userMasterData: state.userMasterData
             };
         });

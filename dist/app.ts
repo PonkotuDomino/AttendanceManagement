@@ -39,30 +39,42 @@ function getUserData(email: string): any {
 
 // ページ描画情報の取得
 function getPageData(sheetId: string, conditions?: any): any {
-    const spreadsheetId = (conditions && (conditions.type === 'TimeSettings'))
-        ? '19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU'
-        : (conditions && (conditions.type === 'UserMaster'))
-            ? '1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk'
-            : sheetId;
+    const spreadsheetId = sheetId || getMasterSheetId(conditions || {});
     const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
     const sheet = spreadsheet.getSheetByName('0');
     const cell = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2);
 
     return {
         data: convertArrayToObject(cell.getValues()),
-        users: (conditions && ((conditions.role === 0) || (conditions.type === 'TimeSettings'))) ? getUsers(conditions.type) : []
+        users: (conditions && (conditions.role === 0)) ? getUsers() : []
     };
 }
 
+// マスタシートID取得
+function getMasterSheetId(condition?: any) {
+    switch (condition.type) {
+        case 'TimeSettingsMaster':
+            return '19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU';
+        case 'UserMaster':
+            return '1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk';
+        default:
+            return '';
+    }
+}
+
 // 担当者一覧を取得
-function getUsers(type: string): any {
+function getUsers(): any {
     const spreadsheet = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
     const sheet = spreadsheet.getSheetByName('0');
     const cell = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2);
-    const data = (cell.getValues() || []).map(d => JSON.parse({ ...d[1], email: d[0] }));
-    return type === 'TimeSettings'
-        ? data.map(d => { return { id: d['id'], name: d.name, email: d.email }; })
-        : data.map(d => { return { sheetId: d[type + 'SheetId'], name: d.name }; });
+    const data = (cell.getValues() || []).map(d => {
+        return {
+            ...(JSON.parse(d[1])),
+            email: d[0]
+        }
+    });
+
+    return data;
 }
 
 // 2次元配列を連想配列に変換
@@ -90,7 +102,7 @@ function setData(conditions: any, value?: any): void {
     } else if (conditions.type === 'TimeSettingsMaster') {
         changeTimeSettingsMaster(conditions.id, value)
     } else if (conditions.type === 'UserMaster') {
-        changeTimeSettingsMaster(conditions.id, value)
+        changeUserMaster(value)
     }
 }
 
@@ -111,7 +123,7 @@ function changeCommuting(email: string): void {
     userMasterCell.setValue(JSON.stringify(userData));
 
     // 時刻設定
-    const workingHoursSS = SpreadsheetApp.openById(userData.WorkingHoursSheetId);
+    const workingHoursSS = SpreadsheetApp.openById(userData.workingHoursSheetId);
     const workingHoursSheet = workingHoursSS.getSheetByName('0');
     const date = new Date();
     const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);
@@ -182,45 +194,74 @@ function changeTimeSettingsMaster(id: string, value: any): void {
     timeSettingsMasterSheet.getRange('B' + timeSettingsMasterFindNext.getRowIndex()).setValue(JSON.stringify(value));
 }
 
-// ユーザマスタ更新
-function changeUserMaster(email: string, value: any): void {
-    // 出退勤状態設定
+// ユーザマスタ追加/更新
+function changeUserMaster(value: any): void {
     const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
     const userMasterSheet = userMasterSS.getSheetByName('0');
-    const userMasterTextFinder = userMasterSheet.createTextFinder(email);
+    const userMasterTextFinder = userMasterSheet.createTextFinder(value.email);
     const userMasterFindNext = userMasterTextFinder.findNext();
     if (!userMasterFindNext) {
         const lastRowIndex = userMasterSheet.getLastRow() + 1;
-        userMasterSheet.getRange('A' + lastRowIndex).setValue(email);
-
-        // ひな形からコピーして作成する
-        const WorkingHoursSheetId = ''/* 新規作成処理 */;
-        const ExpensesSheetId = ''/* 新規作成処理 */;
-        const PaidHolidaySheetId = ''/* 新規作成処理 */;
-        const TimeSettingsSheetId = ''/* 新規作成処理 */;
-
+        userMasterSheet.getRange('A' + lastRowIndex).setValue(value.email);
+        const sheetIds = createNewSheet(value.name);
         const userData = {
             id: value.id,  // id
             name: value.name,  // 名前
             role: +value.role,  // 権限
             commuting: false,  // 出勤有無
             paidHolidayTotalTime: +value.paidHolidayTotalTime,  // 有給残時間
-            WorkingHoursSheetId,
-            ExpensesSheetId,
-            PaidHolidaySheetId,
-            TimeSettingsSheetId,
+            workingHoursSheetId: sheetIds.workinHours,
+            expensesSheetId: sheetIds.expenses,
+            paidHolidaySheetId: sheetIds.paidHoliday,
         };
         userMasterSheet.getRange('B' + lastRowIndex).setValue(JSON.stringify(userData));
     } else {
         const userMasterCell = userMasterSheet.getRange('B' + userMasterFindNext.getRowIndex());
         const userMasterData = JSON.parse(userMasterCell.getValue());
-        userMasterData[email] = {
+        userMasterData[value.email] = {
             ...userMasterData,
             name: value.name,  // 名前
             role: +value.role,  // 権限
             paidHolidayTotalTime: +value.paidHolidayTotalTime,  // 有給残時間
         };
         userMasterCell.setValue(JSON.stringify(userMasterData));
+    }
+}
+
+function createNewSheet(name: string) {
+    const original = SpreadsheetApp.openById('1GeHdS3Sqk-qKO-T--L3xl17g9h9Yogdey6dScxaFbxs');　// ひな形取得
+
+    // 出退勤
+    const newWorkingHoursSheet = original.copy(name); // コピーを作成
+    const workingHoursFolder = DriveApp.getFolderById('1sejeXDbmrVGYz119RPg878jnJCRomlDu'); // 出力フォルダを取得
+    const workingHoursExisting = workingHoursFolder.getFilesByName(name); // すでにシートが存在するか確認し、存在すれば削除
+    if (workingHoursExisting.hasNext()) {
+        workingHoursFolder.removeFile(workingHoursExisting.next());
+    }
+    workingHoursFolder.addFile(DriveApp.getFileById(newWorkingHoursSheet.getId())); // 対象フォルダにシートを追加
+
+    // 交通費精算
+    const newExpensesSheet = original.copy(name); // コピーを作成
+    const expensesFolder = DriveApp.getFolderById('1stRm8FzrkWnVUMK5ujVbNftGxBtkg44y'); // 出力フォルダを取得
+    const expensesExisting = expensesFolder.getFilesByName(name); // すでにシートが存在するか確認し、存在すれば削除
+    if (expensesExisting.hasNext()) {
+        expensesFolder.removeFile(expensesExisting.next());
+    }
+    expensesFolder.addFile(DriveApp.getFileById(newExpensesSheet.getId())); // 対象フォルダにシートを追加
+
+    // 有給管理
+    const newPaidHolidaySheet = original.copy(name); // コピーを作成
+    const paidHolidayFolder = DriveApp.getFolderById('1LhoApxj91fmOnrq7QTLehaYy7khYmrHp'); // 出力フォルダを取得
+    const paidHolidayExisting = paidHolidayFolder.getFilesByName(name); // すでにシートが存在するか確認し、存在すれば削除
+    if (paidHolidayExisting.hasNext()) {
+        paidHolidayFolder.removeFile(paidHolidayExisting.next());
+    }
+    paidHolidayFolder.addFile(DriveApp.getFileById(newPaidHolidaySheet.getId())); // 対象フォルダにシートを追加
+
+    return {
+        workinHours: newWorkingHoursSheet.getId(),
+        expenses: newExpensesSheet.getId(),
+        paidHoliday: newPaidHolidaySheet.getId()
     }
 }
 
@@ -299,7 +340,7 @@ function resetCommuting(): void {
             userData.commuting = false;
             userMasterSheet.getRange("B" + (index + 2)).setValue(JSON.stringify(userData));
 
-            const workingHoursSS = SpreadsheetApp.openById(userData.WorkingHoursSheetId);
+            const workingHoursSS = SpreadsheetApp.openById(userData.workingHoursSheetId);
             const workingHoursSheet = workingHoursSS.getSheetByName('0');
             const date = new Date();
             const yearMonth = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2);

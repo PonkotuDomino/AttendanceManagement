@@ -26,7 +26,7 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
     date.setDate(1);
     const [state, setState] = useState({
         targetYearMonth: date,
-        sheetId: props.user.WorkingHoursSheetId,
+        sheetId: props.user.workingHoursSheetId,
         workingHoursData: {},
         tableData: [],
         userList: [],
@@ -140,21 +140,21 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
     // 社員変更時
     async function handleChangeUser(selectedSheetId: string) {
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-        google.script.run
-            .withSuccessHandler((result: any) => {
-                setState(prevState => {
-                    return {
-                        ...prevState,
-                        sheetId: selectedSheetId,
-                        workingHoursData: result.data || {},
-                        tableData: result.data[yearMonth] || []
-                    };
-                });
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .getPageData(selectedSheetId);
+        // google.script.run
+        //     .withSuccessHandler((result: any) => {
+        //         setState(prevState => {
+        //             return {
+        //                 ...prevState,
+        //                 sheetId: selectedSheetId,
+        //                 workingHoursData: result.data || {},
+        //                 tableData: result.data[yearMonth] || []
+        //             };
+        //         });
+        //     })
+        //     .withFailureHandler((error: { message: any; }) => {
+        //         alert(error.message);
+        //     })
+        //     .getPageData(selectedSheetId);
     }
 
     function createWorkingHoursSheet() {
@@ -183,7 +183,7 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
                                     <InputLabel id="select-users-label">社員</InputLabel>
                                     <Select
                                         autoWidth
-                                        defaultValue={props.user.WorkingHoursSheetId}
+                                        defaultValue={props.user.workingHoursSheetId}
                                         labelId="select-users-label"
                                         onChange={e => {
                                             // name の設定
@@ -191,8 +191,8 @@ export function WorkingHours(props: { user: any, onChange: (data: any, condition
                                         }}
                                     >
                                         {
-                                            state.userList.map((d: { sheetId: string; name: string; }) =>
-                                                <MenuItem key={d.name} value={d.sheetId}>{d.name}</MenuItem>
+                                            state.userList.map((d: { workingHoursSheetId: string; name: string; }) =>
+                                                <MenuItem key={d.name} value={d.workingHoursSheetId}>{d.name}</MenuItem>
                                             )
                                         }
                                     </Select>

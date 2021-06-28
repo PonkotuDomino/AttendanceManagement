@@ -5,9 +5,8 @@ export const userMasterJson = {
         "role": 0,  // 権限
         "commuting": true,  // 出勤有無
         "paidHolidayTotalTime": 20,  // 有給残時間
-        "WorkingHoursSheetId": "",
-        "ExpensesSheetId": "",
-        "PaidHolidaySheetId": "",
-        "TimeSettingsSheetId": "",
+        "workingHoursSheetId": "",
+        "expensesSheetId": "",
+        "paidHolidaySheetId": ""
     }
 };

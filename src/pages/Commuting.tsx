@@ -21,7 +21,7 @@ export function Commuting(props: { user: any, onChange: (conditions: any, data?:
     return (
         <>
             <Header user={props.user} />
-            
+
             <Box m={1}>
                 <Button className={classes.commutingBtn} size="large" color="primary" variant="contained" onClick={handleCommutingButtonClick}>{props.user.commuting ? '退勤' : '出勤'}</Button>
             </Box>

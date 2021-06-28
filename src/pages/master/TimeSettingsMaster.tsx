@@ -61,7 +61,7 @@ export function TimeSettingsMaster(props: { user: any, onChange: (data: any, con
         //     .withFailureHandler((error: { message: any; }) => {
         //         alert(error.message);
         //     })
-        //     .getPageData('', { type: pageName });
+        //     .getPageData('', { role: props.user.role, type: pageName });
     }, []);
 
     // 追加ボタン押下時

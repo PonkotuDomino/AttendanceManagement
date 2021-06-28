@@ -41,7 +41,7 @@ export function App() {
     // 更新処理
     function handleChange(conditions: any, value?: any) {
         // ローカルデバッグ用
-        alert('更新しました。');
+        alert('追加/更新しました。');
         if (conditions.type === 'Commuting') {
             userData.commuting = !userData.commuting;
             setUserData(userData);

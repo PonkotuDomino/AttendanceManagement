@@ -35,7 +35,7 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
     date.setDate(1);
     const [state, setState] = useState({
         targetYearMonth: date,
-        sheetId: props.user.ExpensesSheetId,
+        sheetId: props.user.expensesSheetId,
         expensesData: {},
         tableData: [],
         userList: [],
@@ -115,38 +115,38 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
     // 社員変更時
     function handleChangeUser(selectedSheetId: string) {
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-        google.script.run
-            .withSuccessHandler((result: any) => {
-                setState(prevState => {
-                    return {
-                        ...prevState,
-                        sheetId: selectedSheetId,
-                        expensesData: result.data || {},
-                        tableData: result.data[yearMonth] || []
-                    };
-                });
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .getPageData(selectedSheetId);
+        // google.script.run
+        //     .withSuccessHandler((result: any) => {
+        //         setState(prevState => {
+        //             return {
+        //                 ...prevState,
+        //                 sheetId: selectedSheetId,
+        //                 expensesData: result.data || {},
+        //                 tableData: result.data[yearMonth] || []
+        //             };
+        //         });
+        //     })
+        //     .withFailureHandler((error: { message: any; }) => {
+        //         alert(error.message);
+        //     })
+        //     .getPageData(selectedSheetId);
     }
 
     function createExpensesSheet() {
         const wareki = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'narrow' }).format(state.targetYearMonth);
-        google.script.run
-            .withSuccessHandler((url: string) => {
-                if (url) {
-                    window.open(url);
-                    alert('作成しました。');
-                } else {
-                    alert('エラーが発生しました。フォルダを確認してください。');
-                }
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .createExpensesSheet(state.tableData, state.targetYearMonth.getFullYear(), wareki, props.user.name);
+        // google.script.run
+        //     .withSuccessHandler((url: string) => {
+        //         if (url) {
+        //             window.open(url);
+        //             alert('作成しました。');
+        //         } else {
+        //             alert('エラーが発生しました。フォルダを確認してください。');
+        //         }
+        //     })
+        //     .withFailureHandler((error: { message: any; }) => {
+        //         alert(error.message);
+        //     })
+        //     .createExpensesSheet(state.tableData, state.targetYearMonth.getFullYear(), wareki, props.user.name);
     }
 
     // ヘッダ情報設定
@@ -421,7 +421,7 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
                                     <InputLabel id="select-users-label">社員</InputLabel>
                                     <Select
                                         autoWidth
-                                        defaultValue={props.user.ExpensesSheetId}
+                                        defaultValue={props.user.expensesSheetId}
                                         labelId="select-users-label"
                                         onChange={e => {
                                             // name の設定
@@ -429,8 +429,8 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
                                         }}
                                     >
                                         {
-                                            state.userList.map((d: { sheetId: string; name: string; }) =>
-                                                <MenuItem key={d.name} value={d.sheetId}>{d.name}</MenuItem>
+                                            state.userList.map((d: { expensesSheetId: string; name: string; }) =>
+                                                <MenuItem key={d.name} value={d.expensesSheetId}>{d.name}</MenuItem>
                                             )
                                         }
                                     </Select>
@@ -474,6 +474,8 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
                                     tableData: newTableData
                                 };
                             });
+
+                            alert('更新しました。');
                         }
                     }
                     handleDelete={
@@ -493,6 +495,8 @@ export function Expenses(props: { user: any, onChange: (data: any, conditions?: 
                                     tableData: newTableData
                                 };
                             });
+
+                            alert('削除しました。');
                         }
                     }
                 />
