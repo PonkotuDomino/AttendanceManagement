@@ -69,9 +69,5 @@ devBuild：デバッグビルドします。
 prodBuild：プロダクションビルドします。  
 devDebug：ローカルでデバッグビルドにて実行します。  
 prodDebug：ローカルでプロダクションビルドにて実行します。  
-devWatch：？？？  
-prodWatch：？？？  
-devClaspPush：デバッグビルドでclaspにプッシュします。  
-prodClaspPush：プロダクションビルドでclaspにプッシュします。  
+buildAndClaspPush：プロダクションビルドでclaspにプッシュします。  
 claspPush：現在の状態でpushします。  
-claspCreate：プロジェクトの作成を行います。  
