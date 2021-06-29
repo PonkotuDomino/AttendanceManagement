@@ -20,7 +20,7 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function TimeSettingsMaster(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
+export function TimeSettingsMaster(props: { user: any, onChange: (conditions: any, data?: any) => void }) {
     const classes = useStyle();
     const pageName = 'TimeSettingsMaster';
     const { handleSubmit, control, errors } = useForm();

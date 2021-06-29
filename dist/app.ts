@@ -46,7 +46,8 @@ function getPageData(sheetId: string, conditions?: any): any {
 
     return {
         data: convertArrayToObject(cell.getValues()),
-        users: (conditions && (conditions.role === 0)) ? getUsers() : []
+        users: (conditions && (conditions.role === 0)) ? getUsers() : [],
+        timeSettings: (conditions && (conditions.type === 'UserMaster')) ? getTimeSettings() : []
     };
 }
 
@@ -77,8 +78,16 @@ function getUsers(): any {
     return data;
 }
 
+// 時間設定一覧を取得
+function getTimeSettings(): any {
+    const spreadsheet = SpreadsheetApp.openById('19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU');
+    const sheet = spreadsheet.getSheetByName('0');
+    const cell = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2);
+    return convertArrayToObject(cell.getValues());
+}
+
 // 2次元配列を連想配列に変換
-function convertArrayToObject(values: string | any[]): any {
+function convertArrayToObject(values: any[]): any {
     const data = {};
     for (var i = 0; i < values.length; i++) {
         data[values[i][0]] = JSON.parse(values[i][1]);
@@ -102,7 +111,7 @@ function setData(conditions: any, value?: any): void {
     } else if (conditions.type === 'TimeSettingsMaster') {
         changeTimeSettingsMaster(conditions.id, value)
     } else if (conditions.type === 'UserMaster') {
-        changeUserMaster(value)
+        changeUserMaster(conditions.email, value)
     }
 }
 
@@ -195,33 +204,42 @@ function changeTimeSettingsMaster(id: string, value: any): void {
 }
 
 // ユーザマスタ追加/更新
-function changeUserMaster(value: any): void {
+function changeUserMaster(email: string, value: any): void {
     const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
     const userMasterSheet = userMasterSS.getSheetByName('0');
-    const userMasterTextFinder = userMasterSheet.createTextFinder(value.email);
+    const userMasterTextFinder = userMasterSheet.createTextFinder(email);
     const userMasterFindNext = userMasterTextFinder.findNext();
     if (!userMasterFindNext) {
-        const lastRowIndex = userMasterSheet.getLastRow() + 1;
-        userMasterSheet.getRange('A' + lastRowIndex).setValue(value.email);
+        const userMasterLastRowIndex = userMasterSheet.getLastRow() + 1;
+        userMasterSheet.getRange('A' + userMasterLastRowIndex).setValue(email);
         const sheetIds = createNewSheet(value.name);
         const userData = {
             id: value.id,  // id
             name: value.name,  // 名前
             role: +value.role,  // 権限
             commuting: false,  // 出勤有無
+            defaultTimeSetings: 1, // 基本時間設定
             paidHolidayTotalTime: +value.paidHolidayTotalTime,  // 有給残時間
             workingHoursSheetId: sheetIds.workinHours,
             expensesSheetId: sheetIds.expenses,
             paidHolidaySheetId: sheetIds.paidHoliday,
         };
-        userMasterSheet.getRange('B' + lastRowIndex).setValue(JSON.stringify(userData));
+        userMasterSheet.getRange('B' + userMasterLastRowIndex).setValue(JSON.stringify(userData));
+        
+        // 時間設定
+        const timeSettingsMasterSS = SpreadsheetApp.openById('19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU');
+        const timeSettingsMasterSheet = timeSettingsMasterSS.getSheetByName('0');
+        const timeSettingsLastRowIndex = timeSettingsMasterSheet.getLastRow() + 1;
+        timeSettingsMasterSheet.getRange('A' + timeSettingsLastRowIndex).setValue(value.id);
+        timeSettingsMasterSheet.getRange('B' + timeSettingsLastRowIndex).setValue(JSON.stringify([{ "no": 1, "restTimeFrom2": "", "restTimeFrom1": "1200", "workStartTime": "0900", "name": "本社", "workEndTime": "1800", "restTimeTo3": "", "restTimeFrom3": "", "restTimeTo1": "1300", "restTimeTo2": "", "interval": "15" }]));
     } else {
         const userMasterCell = userMasterSheet.getRange('B' + userMasterFindNext.getRowIndex());
-        const userMasterData = JSON.parse(userMasterCell.getValue());
-        userMasterData[value.email] = {
+        let userMasterData = JSON.parse(userMasterCell.getValue());
+        userMasterData = {
             ...userMasterData,
             name: value.name,  // 名前
             role: +value.role,  // 権限
+            defaultTimeSetings: +value.defaultTimeSetings,
             paidHolidayTotalTime: +value.paidHolidayTotalTime,  // 有給残時間
         };
         userMasterCell.setValue(JSON.stringify(userMasterData));

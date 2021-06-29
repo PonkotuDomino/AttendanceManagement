@@ -50,8 +50,16 @@ export function App() {
         // google.script.run
         //     .withSuccessHandler(() => {
         //         if (conditions.type === 'Commuting') {
-        //             userData.commuting = !userData.commuting;
-        //             setUserData(userData);
+        //             const commuting = userData.commuting;
+        //             setUserData(prevState => {
+        //                 return {
+        //                     ...prevState,
+        //                     commuting: !prevState.commuting
+        //                 };
+        //             });
+        //             alert(!commuting ? '出勤しました。' : '退勤しました。');
+        //         } else {
+        //             alert('更新しました。');
         //         }
         //     })
         //     .withFailureHandler((error: { message: any; }) => {

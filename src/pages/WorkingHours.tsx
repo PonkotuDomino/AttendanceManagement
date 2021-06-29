@@ -19,7 +19,7 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function WorkingHours(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
+export function WorkingHours(props: { user: any, onChange: (conditions: any, data?: any) => void }) {
     const classes = useStyle();
     const pageName = 'WorkingHours';
     const date = new Date();

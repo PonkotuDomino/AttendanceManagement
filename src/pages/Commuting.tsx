@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles, createStyles, Button, Box } from "@material-ui/core";
 import { Header } from "../components/Header";
+import { CircleLoading } from "../components/CircleLoading";
 
 // スタイルの指定
 const useStyle = makeStyles(theme => createStyles({
@@ -20,6 +21,7 @@ export function Commuting(props: { user: any, onChange: (conditions: any, data?:
 
     return (
         <>
+            <CircleLoading {...{ watch: !!props.user.name }} />
             <Header user={props.user} />
 
             <Box m={1}>

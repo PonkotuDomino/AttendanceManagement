@@ -7,6 +7,7 @@ import { google } from "../../main";
 
 // ローカルデバッグ用
 import { userMasterJson } from "../../debugData/userMasterJson";
+import { timeSettingsJson } from "../../debugData/timeSettingsJson";
 
 const useStyle = makeStyles(() => createStyles({
     gridItem: {
@@ -17,7 +18,7 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function UserMaster(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
+export function UserMaster(props: { user: any, onChange: (conditions: any, data?: any) => void }) {
     const classes = useStyle();
     const pageName = 'UserMaster';
     const { handleSubmit, control, errors, setValue } = useForm();
@@ -26,19 +27,20 @@ export function UserMaster(props: { user: any, onChange: (data: any, conditions?
         email: '',
         userMasterData: {},
         userList: [],
+        timeSettings: {},
         loadFlag: false
     });
 
     // レンダリング完了後に実行する
     useEffect(() => {
         // ローカルデバッグ用
-        const userList = Object.entries(userMasterJson).map(x => { return { ...x[1], email: x[0] } });
         setState(prevState => {
             return {
                 ...prevState,
                 id: '',
                 userMasterData: userMasterJson || {},
-                userList: userList || [],
+                userList: Object.entries(userMasterJson).map(x => { return { ...x[1], email: x[0] } }) || [],
+                timeSettings: timeSettingsJson || {},
                 loadFlag: true
             };
         });
@@ -50,6 +52,7 @@ export function UserMaster(props: { user: any, onChange: (data: any, conditions?
         //                 ...prevState,
         //                 userMasterData: result.data || {},
         //                 userList: result.users || [],
+        //                 timeSettings: result.timeSettings || {},
         //                 loadFlag: true
         //             };
         //         });
@@ -67,18 +70,17 @@ export function UserMaster(props: { user: any, onChange: (data: any, conditions?
 
         let userData = state.userMasterData[data.email];
         if (state.id) {
-            userData = {
-                ...userData,
-                name: data.name,
-                role: data.role,
-                paidHolidayTotalTime: data.paidHolidayTotalTime
-            };
+            userData.name = data.name;
+            userData.role = data.role;
+            userData.defaultTimeSetings = data.defaultTimeSetings;
+            userData.paidHolidayTotalTime = data.paidHolidayTotalTime;
         } else {
             userData = {
                 id: data.inputId,
                 email: data.inputEmail,
                 name: data.name,
                 role: data.role,
+                defaultTimeSetings: data.defaultTimeSetings,
                 paidHolidayTotalTime: data.paidHolidayTotalTime
             };
         }
@@ -86,13 +88,11 @@ export function UserMaster(props: { user: any, onChange: (data: any, conditions?
         setState(prevState => {
             return {
                 ...prevState,
-                id: data.inputId,
-                email: data.inputEmail,
                 userMasterData: state.userMasterData
             };
         });
 
-        props.onChange({ type: pageName }, userData);
+        props.onChange({ type: pageName, email: data.inputEmail }, userData);
     }
 
     // 社員変更時
@@ -101,7 +101,8 @@ export function UserMaster(props: { user: any, onChange: (data: any, conditions?
         setState(prevState => {
             return {
                 ...prevState,
-                id: user.id
+                id: user.id,
+                email: email
             };
         });
 
@@ -110,6 +111,7 @@ export function UserMaster(props: { user: any, onChange: (data: any, conditions?
         setValue('inputEmail', email || '');
         setValue('name', user.name || '');
         setValue('role', (user.role || 0) + '');
+        setValue('defaultTimeSetings', (user.defaultTimeSetings || 1) + '');
         setValue('paidHolidayTotalTime', user.paidHolidayTotalTime || '');
         setValue('isAdd', !!user.id);
     }
@@ -203,6 +205,31 @@ export function UserMaster(props: { user: any, onChange: (data: any, conditions?
                                         <MenuItem value="0">システム管理者</MenuItem>
                                         <MenuItem value="1">一般社員</MenuItem>
                                         <MenuItem value="2">管理職</MenuItem>
+                                    </Select>
+                                }
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={1}>
+                        <Grid className={classes.gridItem} item sm={3}>
+                            <InputLabel id="select-defaultTimeSetings-label">時間設定</InputLabel>
+                            <Controller
+                                name="defaultTimeSetings"
+                                defaultValue="1"
+                                control={control}
+                                render={props =>
+                                    <Select
+                                        value={props.value}
+                                        labelId="select-defaultTimeSetings-label"
+                                        onChange={e => props.onChange(e)}
+                                    >
+                                        {
+                                            (Object.keys(state.timeSettings).length && state.id)
+                                                ? state.timeSettings[state.id].map((d: { no: string; name: string; }) =>
+                                                    <MenuItem key={d.name} value={d.no}>{d.name}</MenuItem>
+                                                )
+                                                : <MenuItem key="本社" value="1">本社</MenuItem>
+                                        }
                                     </Select>
                                 }
                             />

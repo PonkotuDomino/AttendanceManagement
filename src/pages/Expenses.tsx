@@ -26,7 +26,7 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function Expenses(props: { user: any, onChange: (data: any, conditions?: any) => void }) {
+export function Expenses(props: { user: any, onChange: (conditions: any, data?: any) => void }) {
     const classes = useStyle();
     const pageName = 'Expenses';
     const { handleSubmit, control, errors } = useForm();
