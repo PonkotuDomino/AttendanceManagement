@@ -39,9 +39,9 @@ export function TimeSettingsMaster(props: { user: any, onChange: (conditions: an
         setState(prevState => {
             return {
                 ...prevState,
-                timeSettingsData: timeSettingsJson,
-                tableData: timeSettingsJson[state.userId],
-                userList: userList,
+                timeSettingsData: timeSettingsJson || {},
+                tableData: timeSettingsJson[state.userId] || [],
+                userList: userList || [],
                 loadFlag: true
             };
         });

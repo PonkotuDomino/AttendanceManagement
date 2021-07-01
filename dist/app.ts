@@ -231,7 +231,7 @@ function changeUserMaster(email: string, value: any): void {
         const timeSettingsMasterSheet = timeSettingsMasterSS.getSheetByName('0');
         const timeSettingsLastRowIndex = timeSettingsMasterSheet.getLastRow() + 1;
         timeSettingsMasterSheet.getRange('A' + timeSettingsLastRowIndex).setValue(value.id);
-        timeSettingsMasterSheet.getRange('B' + timeSettingsLastRowIndex).setValue(JSON.stringify([{ "no": 1, "restTimeFrom2": "", "restTimeFrom1": "1200", "workStartTime": "0900", "name": "本社", "workEndTime": "1800", "restTimeTo3": "", "restTimeFrom3": "", "restTimeTo1": "1300", "restTimeTo2": "", "interval": "15" }]));
+        timeSettingsMasterSheet.getRange('B' + timeSettingsLastRowIndex).setValue(JSON.stringify([{ "no": 1, "restTimeFrom2": "", "restTimeFrom1": "1200", "workStartTime": "0900", "name": "社内", "workEndTime": "1800", "restTimeTo3": "", "restTimeFrom3": "", "restTimeTo1": "1300", "restTimeTo2": "", "interval": "15" }]));
     } else {
         const userMasterCell = userMasterSheet.getRange('B' + userMasterFindNext.getRowIndex());
         let userMasterData = JSON.parse(userMasterCell.getValue());
@@ -246,6 +246,7 @@ function changeUserMaster(email: string, value: any): void {
     }
 }
 
+// 新しいスプレッドシートを作成
 function createNewSheet(name: string) {
     const original = SpreadsheetApp.openById('1GeHdS3Sqk-qKO-T--L3xl17g9h9Yogdey6dScxaFbxs');　// ひな形取得
 
@@ -283,12 +284,39 @@ function createNewSheet(name: string) {
     }
 }
 
+// 勤務表のスプレッドシートを作成
+function createWorkingHoursSheet(data: any, date: string, id: string, name: string): string {
+    const dates = date.split('/');
+    const original = SpreadsheetApp.openById('1NTWfjsbha2JrJgmUeY1UPDWI_eMw8vw8TA3rNaj_8CI');　// ひな形取得
+    const sheetName = original.getName() + '_' + name; // 新しいシート名
+    const newSheet = original.copy(sheetName); // コピーを作成
+    const folder = DriveApp.getFolderById('1ypVPiaT05_T-UE1WbL0zYLwP05JViddY'); // 出力フォルダを取得
+    const folderName = dates[0] + ('0' + dates[1]).slice(-2);
+    const folderIterator = folder.getFoldersByName(folderName); // 対象フォルダのイテレータを取得
+    const targetFolder = folderIterator.hasNext()
+        ? folderIterator.next()
+        : folder.createFolder(folderName); // 対象フォルダが存在する場合はフォルダを取得、存在しない場合は作成
+
+    const existing = targetFolder.getFilesByName(sheetName); // すでにシートが存在するか確認し、存在すれば削除
+    if (existing.hasNext()) {
+        targetFolder.removeFile(existing.next());
+    }
+    targetFolder.addFile(DriveApp.getFileById(newSheet.getId())); // 対象フォルダにシートを追加
+
+    const timeSettings = getTimeSettings()[id];
+    
+    // 勤務表生成処理
+
+    return newSheet.getUrl();
+}
+
+// 交通費精算のスプレッドシートを作成
 function createExpensesSheet(data: any, year: string, wareki: string, name: string): string {
     const dates = wareki.split('/');
     const original = SpreadsheetApp.openById('1WMAP-LCQPwy_7afhZwpkq2JlgvgPhgNxKnuWbX5tn7A');　// ひな形取得
     const sheetName = original.getName() + '_' + name; // 新しいシート名
     const newSheet = original.copy(sheetName); // コピーを作成
-    const folder = DriveApp.getFolderById('1eXIEqLosd8MJJ5jF0j4j3Pq8fOWq0ke7'); // 出力フォルダを取得
+    const folder = DriveApp.getFolderById('1qfTHPoL23nK8B1hLQowXG06uv9I-DTJf'); // 出力フォルダを取得
     const folderName = year + ('0' + dates[1]).slice(-2);
     const folderIterator = folder.getFoldersByName(folderName); // 対象フォルダのイテレータを取得
     const targetFolder = folderIterator.hasNext()
@@ -345,7 +373,7 @@ function createExpensesSheet(data: any, year: string, wareki: string, name: stri
 }
 
 // 出退勤リセットバッチ処理
-// 毎日早朝6~7時くらいに実行
+// 毎日早朝6~7時に実行
 function resetCommuting(): void {
     // ユーザマスタ取得
     const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');

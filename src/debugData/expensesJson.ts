@@ -64,7 +64,7 @@ export const expensesJson = {
             "from": "自宅",
             "means": "0",
             "to": "本社",
-            "destination": "本社",
+            "destination": "帰社",
             "trip": "0",
             "tableData": { "id": 0 },
             "distance": "20",

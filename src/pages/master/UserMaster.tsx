@@ -228,7 +228,7 @@ export function UserMaster(props: { user: any, onChange: (conditions: any, data?
                                                 ? state.timeSettings[state.id].map((d: { no: string; name: string; }) =>
                                                     <MenuItem key={d.name} value={d.no}>{d.name}</MenuItem>
                                                 )
-                                                : <MenuItem key="本社" value="1">本社</MenuItem>
+                                                : <MenuItem key="社内" value="1">社内</MenuItem>
                                         }
                                     </Select>
                                 }

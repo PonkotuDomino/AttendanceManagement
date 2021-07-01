@@ -2,7 +2,7 @@ export const timeSettingsJson = {
     "0010": [
         {
             "no": 1,
-            "name": "本社",
+            "name": "社内",
             "interval": "15",
             "workStartTime": "0900",
             "workEndTime": "1800",
@@ -17,7 +17,7 @@ export const timeSettingsJson = {
     "0090": [
         {
             "no": 1,
-            "name": "本社",
+            "name": "社内",
             "interval": "15",
             "workStartTime": "0900",
             "workEndTime": "1800",
@@ -32,7 +32,7 @@ export const timeSettingsJson = {
     "0091": [
         {
             "no": 1,
-            "name": "本社",
+            "name": "社内",
             "interval": "15",
             "workStartTime": "0900",
             "workEndTime": "1800",

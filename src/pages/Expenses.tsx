@@ -51,9 +51,9 @@ export function Expenses(props: { user: any, onChange: (conditions: any, data?: 
         setState(prevState => {
             return {
                 ...prevState,
-                expensesData: expensesJson,
-                tableData: expensesJson[yearMonth],
-                userList: userList,
+                expensesData: expensesJson || {},
+                tableData: expensesJson[yearMonth] || [],
+                userList: userList || [],
                 loadFlag: true
             };
         });
@@ -394,6 +394,7 @@ export function Expenses(props: { user: any, onChange: (conditions: any, data?: 
                                 }}
                                 label="金額"
                                 type="number"
+                                placeholder="30円/Km"
                             />
                             {errors.amount && <div className={classes.errorMessage}>必須入力</div>}
                         </Grid>
@@ -410,14 +411,14 @@ export function Expenses(props: { user: any, onChange: (conditions: any, data?: 
 
             <Box m={2}>
                 <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" onClick={() => handleChangeMonth(false)}>前月</Button>
                         <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" style={{ marginLeft: '10px' }} onClick={() => handleChangeMonth(true)}>翌月</Button>
                     </Grid>
                     {
                         props.user.role === 0
                             ? (
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6}>
                                     <InputLabel id="select-users-label">社員</InputLabel>
                                     <Select
                                         autoWidth

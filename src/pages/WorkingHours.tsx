@@ -41,9 +41,9 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
         setState(prevState => {
             return {
                 ...prevState,
-                workingHoursData: workingHoursJson,
-                tableData: workingHoursJson[yearMonth],
-                userList: userList,
+                workingHoursData: workingHoursJson || {},
+                tableData: workingHoursJson[yearMonth] || [],
+                userList: userList || [],
                 loadFlag: true
             };
         });
@@ -158,11 +158,19 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
     }
 
     function createWorkingHoursSheet() {
-        // ローカルデバッグ用
-        // alert('作成しました。');
-
-        // TODO
-        alert('未実装');
+        google.script.run
+            .withSuccessHandler((url: string) => {
+                if (url) {
+                    window.open(url);
+                    alert('作成しました。');
+                } else {
+                    alert('エラーが発生しました。フォルダを確認してください。');
+                }
+            })
+            .withFailureHandler((error: { message: any; }) => {
+                alert(error.message);
+            })
+            .createWorkingHoursSheet(state.tableData, state.targetYearMonth.toLocaleDateString(), props.user.id, props.user.name);
     }
 
     return (
@@ -172,14 +180,14 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
 
             <Box m={2}>
                 <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" onClick={() => handleChangeMonth(false)}>前月</Button>
                         <Button className={classes.changeMonthButton} size="large" color="primary" variant="contained" style={{ marginLeft: '10px' }} onClick={() => handleChangeMonth(true)}>翌月</Button>
                     </Grid>
                     {
                         props.user.role === 0
                             ? (
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6}>
                                     <InputLabel id="select-users-label">社員</InputLabel>
                                     <Select
                                         autoWidth
