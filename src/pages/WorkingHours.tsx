@@ -158,19 +158,19 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
     }
 
     function createWorkingHoursSheet() {
-        google.script.run
-            .withSuccessHandler((url: string) => {
-                if (url) {
-                    window.open(url);
-                    alert('作成しました。');
-                } else {
-                    alert('エラーが発生しました。フォルダを確認してください。');
-                }
-            })
-            .withFailureHandler((error: { message: any; }) => {
-                alert(error.message);
-            })
-            .createWorkingHoursSheet(state.tableData, state.targetYearMonth.toLocaleDateString(), props.user.id, props.user.name);
+        // google.script.run
+        //     .withSuccessHandler((url: string) => {
+        //         if (url) {
+        //             window.open(url);
+        //             alert('作成しました。');
+        //         } else {
+        //             alert('エラーが発生しました。フォルダを確認してください。');
+        //         }
+        //     })
+        //     .withFailureHandler((error: { message: any; }) => {
+        //         alert(error.message);
+        //     })
+        //     .createWorkingHoursSheet(state.tableData, state.targetYearMonth.toLocaleDateString(), props.user.id, props.user.name);
     }
 
     return (
