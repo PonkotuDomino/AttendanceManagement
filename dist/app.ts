@@ -47,7 +47,7 @@ function getPageData(sheetId: string, conditions?: any): any {
     return {
         data: convertArrayToObject(cell.getValues()),
         users: (conditions && (conditions.role === 0)) ? getUsers() : [],
-        timeSettings: (conditions && (conditions.type === 'UserMaster')) ? getTimeSettings() : []
+        timeSettings: (conditions && (conditions.type === 'WorkingHours' || conditions.type === 'UserMaster')) ? getTimeSettings() : []
     };
 }
 
@@ -150,9 +150,9 @@ function changeCommuting(email: string, currentContent: string): void {
                 start: (index === date.getDate()) ? ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2) : '',
                 end: '',
                 leaveType: 0,
-                notes: currentContent,
+                notes: '',
                 isChange: false,
-                workTimeDivision: 1
+                workTimeDivision: (index === date.getDate()) ? userData.defaultTimeSetings : 0
             });
         }
         workingHoursSheet.getRange('B' + lastRowIndex).setValue(JSON.stringify(thisMonthData));

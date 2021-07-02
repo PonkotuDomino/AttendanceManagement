@@ -89,7 +89,8 @@ export function App() {
     return (
         <>
             {
-                (Object.keys(userData).length > 1)
+                // 要検討 userDataのプロパティ数が初期値以上の場合を判定
+                (Object.keys(userData).length > 2)
                     ? (
                         <ThemeProvider theme={theme}>
                             <HashRouter>
@@ -126,7 +127,7 @@ export function App() {
                         </ThemeProvider>
                     )
                     : (
-                        <CircleLoading {...{ watch: (Object.keys(userData).length > 1) }} />
+                        <CircleLoading {...{ watch: (Object.keys(userData).length > 2) }} />
                     )
             }
         </>

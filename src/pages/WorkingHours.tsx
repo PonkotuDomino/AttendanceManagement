@@ -9,6 +9,7 @@ import { google } from "../main";
 // ローカルデバッグ用
 import { workingHoursJson } from "../debugData/workingHoursJson";
 import { userMasterJson } from "../debugData/userMasterJson";
+import { timeSettingsJson } from "../debugData/timeSettingsJson";
 
 const useStyle = makeStyles(() => createStyles({
     changeMonthButton: {
@@ -30,6 +31,8 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
         workingHoursData: {},
         tableData: [],
         userList: [],
+        timeSettings: {},
+        timeSettingsItems: {},
         loadFlag: false
     });
 
@@ -37,24 +40,39 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
         if (props.isDebug) {
             const userList = Object.entries(userMasterJson).map(x => x[1]);
+            const timeSettings = timeSettingsJson || {};
+            let timeSettingsItems = { 0: '' };
+            timeSettings[props.user.id].forEach((d: { no: number; name: string; }) => {
+                timeSettingsItems[d.no] = d.name;
+            });
+
             setState(prevState => {
                 return {
                     ...prevState,
                     workingHoursData: workingHoursJson || {},
                     tableData: workingHoursJson[yearMonth] || [],
                     userList: userList || [],
+                    timeSettings: timeSettingsJson || {},
                     loadFlag: true
                 };
             });
         } else {
             google.script.run
                 .withSuccessHandler((result: any) => {
+                    const timeSettings = result.timeSettings || {};
+                    let timeSettingsItems = { 0: '' };
+                    timeSettings[props.user.id].forEach((d: { no: number; name: string; }) => {
+                        timeSettingsItems[d.no] = d.name;
+                    });
+
                     setState(prevState => {
                         return {
                             ...prevState,
                             workingHoursData: result.data || {},
                             tableData: result.data[yearMonth] || [],
                             userList: result.users || [],
+                            timeSettings,
+                            timeSettingsItems,
                             loadFlag: true
                         };
                     });
@@ -113,13 +131,14 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
             lookup: { 0: '', 1: '有給休暇', 2: '午前有給', 3: '午後有給' }
         },
         {
-            title: '備考',
-            field: 'notes',
-        },
-        {
             title: '時間設定区分',
             field: 'workTimeDivision',
+            lookup: state.timeSettingsItems || {}
         },
+        {
+            title: '業務内容・備考',
+            field: 'notes'
+        }
     ];
 
     // 前月/今月ボタン押下時
