@@ -18,7 +18,7 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function UserMaster(props: { user: any, onChange: (conditions: any, data?: any) => void }) {
+export function UserMaster(props: { user: any, onChange: (conditions: any, data?: any) => void, isDebug: boolean }) {
     const classes = useStyle();
     const pageName = 'UserMaster';
     const { handleSubmit, control, errors, setValue } = useForm();
@@ -33,34 +33,35 @@ export function UserMaster(props: { user: any, onChange: (conditions: any, data?
 
     // レンダリング完了後に実行する
     useEffect(() => {
-        // ローカルデバッグ用
-        setState(prevState => {
-            return {
-                ...prevState,
-                id: '',
-                userMasterData: userMasterJson || {},
-                userList: Object.entries(userMasterJson).map(x => { return { ...x[1], email: x[0] } }) || [],
-                timeSettings: timeSettingsJson || {},
-                loadFlag: true
-            };
-        });
-
-        // google.script.run
-        //     .withSuccessHandler((result: any) => {
-        //         setState(prevState => {
-        //             return {
-        //                 ...prevState,
-        //                 userMasterData: result.data || {},
-        //                 userList: result.users || [],
-        //                 timeSettings: result.timeSettings || {},
-        //                 loadFlag: true
-        //             };
-        //         });
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .getPageData('', { role: props.user.role, type: pageName });
+        if (props.isDebug) {
+            setState(prevState => {
+                return {
+                    ...prevState,
+                    id: '',
+                    userMasterData: userMasterJson || {},
+                    userList: Object.entries(userMasterJson).map(x => { return { ...x[1], email: x[0] } }) || [],
+                    timeSettings: timeSettingsJson || {},
+                    loadFlag: true
+                };
+            });
+        } else {
+            google.script.run
+                .withSuccessHandler((result: any) => {
+                    setState(prevState => {
+                        return {
+                            ...prevState,
+                            userMasterData: result.data || {},
+                            userList: result.users || [],
+                            timeSettings: result.timeSettings || {},
+                            loadFlag: true
+                        };
+                    });
+                })
+                .withFailureHandler((error: { message: any; }) => {
+                    alert(error.message);
+                })
+                .getPageData('', { role: props.user.role, type: pageName });
+        }
     }, []);
 
     // 追加/更新ボタン押下時

@@ -22,56 +22,74 @@ export let google = WindowExtention.google;
 
 export function App() {
     // 各ページのpropsに割り当てる個人のデータ
-    const [userData, setUserData] = useState({ commuting: false });
+    const [userData, setUserData] = useState({
+        commuting: false,
+        currentContent: ''
+    });
+    const isDebug = !!DEBUG_EMAIL;
 
     useEffect(() => {
-        // ローカルデバッグ用
-        setUserData(userMasterJson[DEBUG_EMAIL]);
-
-        // google.script.run
-        //     .withSuccessHandler((data: any) => {
-        //         setUserData(data);
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .getInitData();
+        if (isDebug) {
+            setUserData(prevState => {
+                return {
+                    ...prevState,
+                    ...userMasterJson[DEBUG_EMAIL]
+                }
+            });
+        } else {
+            google.script.run
+                .withSuccessHandler((data: any) => {
+                    setUserData(data);
+                })
+                .withFailureHandler((error: { message: any; }) => {
+                    alert(error.message);
+                })
+                .getInitData();
+        }
     }, []);
 
     // 更新処理
     function handleChange(conditions: any, value?: any) {
-        // ローカルデバッグ用
-        alert('追加/更新しました。');
-        if (conditions.type === 'Commuting') {
-            userData.commuting = !userData.commuting;
-            setUserData(userData);
+        if (isDebug) {
+            alert('追加/更新しました。');
+            if (conditions.type === 'Commuting') {
+                userData.commuting = !userData.commuting;
+                userData.currentContent = value;
+                setUserData(prevState => {
+                    return {
+                        ...prevState,
+                        commuting: !userData.commuting,
+                        currentContent: value
+                    }
+                });
+            }
+        } else {
+            google.script.run
+                .withSuccessHandler(() => {
+                    if (conditions.type === 'Commuting') {
+                        const commuting = userData.commuting;
+                        setUserData(prevState => {
+                            return {
+                                ...prevState,
+                                commuting: !prevState.commuting
+                            };
+                        });
+                        alert(!commuting ? '出勤しました。' : '退勤しました。');
+                    } else {
+                        alert('更新しました。');
+                    }
+                })
+                .withFailureHandler((error: { message: any; }) => {
+                    alert(error.message);
+                })
+                .setData(conditions, value);
         }
-
-        // google.script.run
-        //     .withSuccessHandler(() => {
-        //         if (conditions.type === 'Commuting') {
-        //             const commuting = userData.commuting;
-        //             setUserData(prevState => {
-        //                 return {
-        //                     ...prevState,
-        //                     commuting: !prevState.commuting
-        //                 };
-        //             });
-        //             alert(!commuting ? '出勤しました。' : '退勤しました。');
-        //         } else {
-        //             alert('更新しました。');
-        //         }
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .setData(conditions, value);
     }
 
     return (
         <>
             {
-                !!Object.keys(userData).length
+                (Object.keys(userData).length > 1)
                     ? (
                         <ThemeProvider theme={theme}>
                             <HashRouter>
@@ -81,19 +99,19 @@ export function App() {
                                         <Commuting user={userData} onChange={handleChange} />
                                     </Route>
                                     <Route path="/workingHours">
-                                        <WorkingHours user={userData} onChange={handleChange} />
+                                        <WorkingHours user={userData} onChange={handleChange} isDebug={isDebug} />
                                     </Route>
                                     <Route path="/expenses">
-                                        <Expenses user={userData} onChange={handleChange} />
+                                        <Expenses user={userData} onChange={handleChange} isDebug={isDebug} />
                                     </Route>
                                     <Route path="/paidHoliday">
-                                        <PaidHoliday user={userData} onChange={handleChange} />
+                                        <PaidHoliday user={userData} onChange={handleChange} isDebug={isDebug} />
                                     </Route>
                                     <Route path="/timeSettingsMaster">
-                                        <TimeSettingsMaster user={userData} onChange={handleChange} />
+                                        <TimeSettingsMaster user={userData} onChange={handleChange} isDebug={isDebug} />
                                     </Route>
                                     <Route path="/userMaster">
-                                        <UserMaster user={userData} onChange={handleChange} />
+                                        <UserMaster user={userData} onChange={handleChange} isDebug={isDebug} />
                                     </Route>
                                     {/* デフォルトパス */}
                                     <Route>
@@ -108,7 +126,7 @@ export function App() {
                         </ThemeProvider>
                     )
                     : (
-                        <CircleLoading {...{ watch: !!Object.keys(userData).length }} />
+                        <CircleLoading {...{ watch: (Object.keys(userData).length > 1) }} />
                     )
             }
         </>

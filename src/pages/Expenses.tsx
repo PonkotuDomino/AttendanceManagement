@@ -26,7 +26,7 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function Expenses(props: { user: any, onChange: (conditions: any, data?: any) => void }) {
+export function Expenses(props: { user: any, onChange: (conditions: any, data?: any) => void, isDebug: boolean }) {
     const classes = useStyle();
     const pageName = 'Expenses';
     const { handleSubmit, control, errors } = useForm();
@@ -45,35 +45,35 @@ export function Expenses(props: { user: any, onChange: (conditions: any, data?: 
     // レンダリング完了後に実行する
     useEffect(() => {
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-
-        // ローカルデバッグ用
-        const userList = Object.entries(userMasterJson).map(x => x[1]);
-        setState(prevState => {
-            return {
-                ...prevState,
-                expensesData: expensesJson || {},
-                tableData: expensesJson[yearMonth] || [],
-                userList: userList || [],
-                loadFlag: true
-            };
-        });
-
-        // google.script.run
-        //     .withSuccessHandler((result: any) => {
-        //         setState(prevState => {
-        //             return {
-        //                 ...prevState,
-        //                 expensesData: result.data || {},
-        //                 tableData: result.data[yearMonth] || [],
-        //                 userList: result.users || [],
-        //                 loadFlag: true
-        //             };
-        //         });
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .getPageData(state.sheetId, { role: props.user.role, type: pageName });
+        if (props.isDebug) {
+            const userList = Object.entries(userMasterJson).map(x => x[1]);
+            setState(prevState => {
+                return {
+                    ...prevState,
+                    expensesData: expensesJson || {},
+                    tableData: expensesJson[yearMonth] || [],
+                    userList: userList || [],
+                    loadFlag: true
+                };
+            });
+        } else {
+            google.script.run
+                .withSuccessHandler((result: any) => {
+                    setState(prevState => {
+                        return {
+                            ...prevState,
+                            expensesData: result.data || {},
+                            tableData: result.data[yearMonth] || [],
+                            userList: result.users || [],
+                            loadFlag: true
+                        };
+                    });
+                })
+                .withFailureHandler((error: { message: any; }) => {
+                    alert(error.message);
+                })
+                .getPageData(state.sheetId, { role: props.user.role, type: pageName });
+        }
     }, []);
 
     // 追加ボタン押下時
@@ -115,38 +115,42 @@ export function Expenses(props: { user: any, onChange: (conditions: any, data?: 
     // 社員変更時
     function handleChangeUser(selectedSheetId: string) {
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-        // google.script.run
-        //     .withSuccessHandler((result: any) => {
-        //         setState(prevState => {
-        //             return {
-        //                 ...prevState,
-        //                 sheetId: selectedSheetId,
-        //                 expensesData: result.data || {},
-        //                 tableData: result.data[yearMonth] || []
-        //             };
-        //         });
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .getPageData(selectedSheetId);
+        if (props.isDebug) {
+            alert('デバッグ時に変更できません。');
+        } else {
+            google.script.run
+                .withSuccessHandler((result: any) => {
+                    setState(prevState => {
+                        return {
+                            ...prevState,
+                            sheetId: selectedSheetId,
+                            expensesData: result.data || {},
+                            tableData: result.data[yearMonth] || []
+                        };
+                    });
+                })
+                .withFailureHandler((error: { message: any; }) => {
+                    alert(error.message);
+                })
+                .getPageData(selectedSheetId);
+        }
     }
 
     function createExpensesSheet() {
         const wareki = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'narrow' }).format(state.targetYearMonth);
-        // google.script.run
-        //     .withSuccessHandler((url: string) => {
-        //         if (url) {
-        //             window.open(url);
-        //             alert('作成しました。');
-        //         } else {
-        //             alert('エラーが発生しました。フォルダを確認してください。');
-        //         }
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .createExpensesSheet(state.tableData, state.targetYearMonth.getFullYear(), wareki, props.user.name);
+        google.script.run
+            .withSuccessHandler((url: string) => {
+                if (url) {
+                    window.open(url);
+                    alert('作成しました。');
+                } else {
+                    alert('エラーが発生しました。フォルダを確認してください。');
+                }
+            })
+            .withFailureHandler((error: { message: any; }) => {
+                alert(error.message);
+            })
+            .createExpensesSheet(state.tableData, state.targetYearMonth.getFullYear(), wareki, props.user.name);
     }
 
     // ヘッダ情報設定

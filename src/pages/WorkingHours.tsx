@@ -19,7 +19,7 @@ const useStyle = makeStyles(() => createStyles({
     }
 }));
 
-export function WorkingHours(props: { user: any, onChange: (conditions: any, data?: any) => void }) {
+export function WorkingHours(props: { user: any, onChange: (conditions: any, data?: any) => void, isDebug: boolean }) {
     const classes = useStyle();
     const pageName = 'WorkingHours';
     const date = new Date();
@@ -35,35 +35,35 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
 
     useEffect(() => {
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-
-        // ローカルデバッグ用
-        const userList = Object.entries(userMasterJson).map(x => x[1]);
-        setState(prevState => {
-            return {
-                ...prevState,
-                workingHoursData: workingHoursJson || {},
-                tableData: workingHoursJson[yearMonth] || [],
-                userList: userList || [],
-                loadFlag: true
-            };
-        });
-
-        // google.script.run
-        //     .withSuccessHandler((result: any) => {
-        //         setState(prevState => {
-        //             return {
-        //                 ...prevState,
-        //                 workingHoursData: result.data || {},
-        //                 tableData: result.data[yearMonth] || [],
-        //                 userList: result.users || [],
-        //                 loadFlag: true
-        //             };
-        //         });
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .getPageData(state.sheetId, { role: props.user.role, type: pageName });
+        if (props.isDebug) {
+            const userList = Object.entries(userMasterJson).map(x => x[1]);
+            setState(prevState => {
+                return {
+                    ...prevState,
+                    workingHoursData: workingHoursJson || {},
+                    tableData: workingHoursJson[yearMonth] || [],
+                    userList: userList || [],
+                    loadFlag: true
+                };
+            });
+        } else {
+            google.script.run
+                .withSuccessHandler((result: any) => {
+                    setState(prevState => {
+                        return {
+                            ...prevState,
+                            workingHoursData: result.data || {},
+                            tableData: result.data[yearMonth] || [],
+                            userList: result.users || [],
+                            loadFlag: true
+                        };
+                    });
+                })
+                .withFailureHandler((error: { message: any; }) => {
+                    alert(error.message);
+                })
+                .getPageData(state.sheetId, { role: props.user.role, type: pageName });
+        }
     }, []);
 
     const headers = [
@@ -140,24 +140,29 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
     // 社員変更時
     async function handleChangeUser(selectedSheetId: string) {
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-        // google.script.run
-        //     .withSuccessHandler((result: any) => {
-        //         setState(prevState => {
-        //             return {
-        //                 ...prevState,
-        //                 sheetId: selectedSheetId,
-        //                 workingHoursData: result.data || {},
-        //                 tableData: result.data[yearMonth] || []
-        //             };
-        //         });
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .getPageData(selectedSheetId);
+        if (props.isDebug) {
+            alert('デバッグ時に変更できません。');
+        } else {
+            google.script.run
+                .withSuccessHandler((result: any) => {
+                    setState(prevState => {
+                        return {
+                            ...prevState,
+                            sheetId: selectedSheetId,
+                            workingHoursData: result.data || {},
+                            tableData: result.data[yearMonth] || []
+                        };
+                    });
+                })
+                .withFailureHandler((error: { message: any; }) => {
+                    alert(error.message);
+                })
+                .getPageData(selectedSheetId);
+        }
     }
 
     function createWorkingHoursSheet() {
+        alert('未実装');
         // google.script.run
         //     .withSuccessHandler((url: string) => {
         //         if (url) {

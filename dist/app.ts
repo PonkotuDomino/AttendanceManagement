@@ -103,7 +103,7 @@ function setData(conditions: any, value?: any): void {
     }
 
     if (conditions.type === 'Commuting') {
-        changeCommuting(email)
+        changeCommuting(email, value);
     } else if (conditions.type === 'WorkingHours') {
         changeWorkingHours(conditions.sheetId, conditions.yearMonth, value);
     } else if (conditions.type === 'Expenses') {
@@ -116,7 +116,7 @@ function setData(conditions: any, value?: any): void {
 }
 
 // 出退勤状態更新
-function changeCommuting(email: string): void {
+function changeCommuting(email: string, currentContent: string): void {
     // 出退勤状態設定
     const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
     const userMasterSheet = userMasterSS.getSheetByName('0');
@@ -129,6 +129,7 @@ function changeCommuting(email: string): void {
     const userData = JSON.parse(userMasterCell.getValue());
     const isCommuting = !userData.commuting; // 変更後の状態
     userData.commuting = isCommuting;
+    userData.currentContent = currentContent;
     userMasterCell.setValue(JSON.stringify(userData));
 
     // 時刻設定
@@ -149,7 +150,7 @@ function changeCommuting(email: string): void {
                 start: (index === date.getDate()) ? ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2) : '',
                 end: '',
                 leaveType: 0,
-                notes: '',
+                notes: currentContent,
                 isChange: false,
                 workTimeDivision: 1
             });
@@ -159,6 +160,7 @@ function changeCommuting(email: string): void {
         const workingHoursCell = workingHoursSheet.getRange('B' + workingHoursFindNext.getRowIndex());
         const workingHoursData = JSON.parse(workingHoursCell.getValue());
         workingHoursData[date.getDate() - 1][isCommuting ? 'start' : 'end'] = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
+        workingHoursData[date.getDate() - 1]['notes'] = currentContent;
         workingHoursCell.setValue(JSON.stringify(workingHoursData));
     }
 }
@@ -218,6 +220,7 @@ function changeUserMaster(email: string, value: any): void {
             name: value.name,  // 名前
             role: +value.role,  // 権限
             commuting: false,  // 出勤有無
+            currentContent: '', // 最近の業務内容
             defaultTimeSetings: 1, // 基本時間設定
             paidHolidayTotalTime: +value.paidHolidayTotalTime,  // 有給残時間
             workingHoursSheetId: sheetIds.workinHours,
