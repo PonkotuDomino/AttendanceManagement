@@ -6,6 +6,7 @@ export function EditableTable(
         title: string,
         header: any[],
         data: any[],
+        detailPanel?: any,
         options?: any,
         isEditable?: (rowData: any) => any,
         isDeletable?: (rowData: any) => any,
@@ -124,6 +125,7 @@ export function EditableTable(
             localization={localizationJapanese}
             columns={props.header}
             data={props.data}
+            detailPanel={props.detailPanel}
             options={props.options}
             editable={editable}
         />

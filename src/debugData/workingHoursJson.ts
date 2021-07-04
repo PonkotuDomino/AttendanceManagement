@@ -2,1361 +2,1280 @@ export const workingHoursJson = {
     "202102": [
         {
             "date": 1,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 2,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 3,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 4,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 5,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 6,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 7,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 8,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 9,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 10,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 11,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 12,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 13,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 14,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 15,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 16,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 17,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 18,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 19,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 20,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 21,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 22,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 23,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 24,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 25,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 26,
-            "start": "0900",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "テスト入力テスト入力テスト入力",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 27,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 28,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         }
     ],
     "202103": [
         {
             "date": 1,
-            "start": "0805",
-            "end": "1845",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 2,
-            "start": "0807",
-            "end": "1719",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 1,
-            "workTimeDivision": 1
+            "isChange": 1
         },
         {
             "date": 3,
-            "start": "0821",
-            "end": "1817",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 4,
-            "start": "0815",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "押し忘れ",
-            "isChange": 1,
-            "workTimeDivision": 1
+            "isChange": 1
         },
         {
             "date": 5,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 6,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 7,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 8,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 9,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 10,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 11,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 12,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 13,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 14,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 15,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 16,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 17,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 18,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 19,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 20,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 21,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 22,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 23,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 24,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 25,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 26,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 27,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 28,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 29,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 30,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 31,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         }
     ],
     "202104": [
         {
             "date": 1,
-            "start": "0805",
-            "end": "1845",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 2,
-            "start": "0807",
-            "end": "1719",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 1,
-            "workTimeDivision": 1
+            "isChange": 1
         },
         {
             "date": 3,
-            "start": "0821",
-            "end": "1817",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 4,
-            "start": "0815",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "押し忘れ",
-            "isChange": 1,
-            "workTimeDivision": 1
+            "isChange": 1
         },
         {
             "date": 5,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 6,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 7,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 8,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 9,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 10,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 11,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 12,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 13,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 14,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 15,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 16,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 17,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 18,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 19,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 20,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 21,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 22,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 23,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 24,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 25,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 26,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 27,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 28,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 29,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 30,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         }
     ],
     "202105": [
         {
             "date": 1,
-            "start": "0805",
-            "end": "1845",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 2,
-            "start": "0807",
-            "end": "1719",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 1,
-            "workTimeDivision": 1
+            "isChange": 1
         },
         {
             "date": 3,
-            "start": "0821",
-            "end": "1817",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 4,
-            "start": "0815",
-            "end": "1800",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "押し忘れ",
-            "isChange": 1,
-            "workTimeDivision": 1
+            "isChange": 1
         },
         {
             "date": 5,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 6,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 7,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 8,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 9,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 10,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 11,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 12,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 13,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 14,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 15,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 16,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 17,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 18,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 19,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 20,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 21,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 22,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 23,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 24,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 25,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 26,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 27,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 28,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 29,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 30,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 31,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         }
     ],
     "202106": [
         {
             "date": 1,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 2,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 3,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 4,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 5,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 6,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 7,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 8,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 9,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 10,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 11,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 12,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 13,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 14,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 15,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 16,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 17,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 18,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 19,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 20,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 21,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 22,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 23,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 24,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 25,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 26,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 27,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 28,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 29,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
         },
         {
             "date": 30,
-            "start": "",
-            "end": "",
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
             "leaveType": 0,
             "notes": "",
-            "isChange": 0,
-            "workTimeDivision": 1
+            "isChange": 0
+        }
+    ],
+    "202107": [
+        {
+            "date": 1,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 2,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 3,
+            "records": [],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 4,
+            "records": [],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 5,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 6,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 7,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 8,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 9,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 10,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 11,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 12,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 13,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 14,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 15,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 16,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 17,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 18,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 19,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 20,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 21,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 22,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 23,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 24,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 25,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 26,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 27,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 28,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 29,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 30,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
+        },
+        {
+            "date": 31,
+            "records": [{ "start": "0900", "end": "1800", "division": 1 }],
+            "leaveType": 0,
+            "notes": "",
+            "isChange": 0
         }
     ]
 };

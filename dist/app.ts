@@ -103,9 +103,9 @@ function setData(conditions: any, value?: any): void {
     }
 
     if (conditions.type === 'Commuting') {
-        changeCommuting(email, value);
+        changeCommuting(email, JSON.parse(value));
     } else if (conditions.type === 'WorkingHours') {
-        changeWorkingHours(conditions.sheetId, conditions.yearMonth, value);
+        changeWorkingHours(conditions.sheetId, conditions.yearMonth, JSON.parse(value));
     } else if (conditions.type === 'Expenses') {
         changeExpenses(conditions.sheetId, conditions.yearMonth, value);
     } else if (conditions.type === 'TimeSettingsMaster') {
@@ -116,7 +116,7 @@ function setData(conditions: any, value?: any): void {
 }
 
 // 出退勤状態更新
-function changeCommuting(email: string, currentContent: string): void {
+function changeCommuting(email: string, value: any): void {
     // 出退勤状態設定
     const userMasterSS = SpreadsheetApp.openById('1l5QRVxOc8puz6Zlx3-fNIG-6nx4w6ekvq6NGQmxGxxk');
     const userMasterSheet = userMasterSS.getSheetByName('0');
@@ -129,7 +129,8 @@ function changeCommuting(email: string, currentContent: string): void {
     const userData = JSON.parse(userMasterCell.getValue());
     const isCommuting = !userData.commuting; // 変更後の状態
     userData.commuting = isCommuting;
-    userData.currentContent = currentContent;
+    userData.currentTimeSetting = value.timeSetting;
+    userData.currentContent = value.content;
     userMasterCell.setValue(JSON.stringify(userData));
 
     // 時刻設定
@@ -147,20 +148,23 @@ function changeCommuting(email: string, currentContent: string): void {
         for (let index = 1; index <= (new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()); index++) {
             thisMonthData.push({
                 date: index,
-                start: (index === date.getDate()) ? ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2) : '',
-                end: '',
+                records: [],
                 leaveType: 0,
                 notes: '',
-                isChange: false,
-                workTimeDivision: (index === date.getDate()) ? userData.defaultTimeSetings : 0
+                isChange: false
             });
         }
         workingHoursSheet.getRange('B' + lastRowIndex).setValue(JSON.stringify(thisMonthData));
     } else {
         const workingHoursCell = workingHoursSheet.getRange('B' + workingHoursFindNext.getRowIndex());
         const workingHoursData = JSON.parse(workingHoursCell.getValue());
-        workingHoursData[date.getDate() - 1][isCommuting ? 'start' : 'end'] = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
-        workingHoursData[date.getDate() - 1]['notes'] = currentContent;
+        if (isCommuting) {
+            workingHoursData[date.getDate() - 1].records.push({ 'start': ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2), 'end': '', timeSetting: value.timeSetting });
+        } else {
+            const position = workingHoursData[date.getDate() - 1].records.length - 1;
+            workingHoursData[date.getDate() - 1].records[position].end = ('0' + date.getHours()).slice(-2) + ('0' + date.getMinutes()).slice(-2);
+        }
+        workingHoursData[date.getDate() - 1].notes = value.content;
         workingHoursCell.setValue(JSON.stringify(workingHoursData));
     }
 }
@@ -220,21 +224,34 @@ function changeUserMaster(email: string, value: any): void {
             name: value.name,  // 名前
             role: +value.role,  // 権限
             commuting: false,  // 出勤有無
+            currentTimeSetting: 0, // 最近の出勤時間区分
             currentContent: '', // 最近の業務内容
-            defaultTimeSetings: 1, // 基本時間設定
             paidHolidayTotalTime: +value.paidHolidayTotalTime,  // 有給残時間
             workingHoursSheetId: sheetIds.workinHours,
             expensesSheetId: sheetIds.expenses,
             paidHolidaySheetId: sheetIds.paidHoliday,
         };
         userMasterSheet.getRange('B' + userMasterLastRowIndex).setValue(JSON.stringify(userData));
-        
+
         // 時間設定
         const timeSettingsMasterSS = SpreadsheetApp.openById('19Eqx1c0S3tlDN3OAQmU8kMn_aXX9RPleKm5mcJ_1XEU');
         const timeSettingsMasterSheet = timeSettingsMasterSS.getSheetByName('0');
         const timeSettingsLastRowIndex = timeSettingsMasterSheet.getLastRow() + 1;
         timeSettingsMasterSheet.getRange('A' + timeSettingsLastRowIndex).setValue(value.id);
-        timeSettingsMasterSheet.getRange('B' + timeSettingsLastRowIndex).setValue(JSON.stringify([{ "no": 1, "restTimeFrom2": "", "restTimeFrom1": "1200", "workStartTime": "0900", "name": "社内", "workEndTime": "1800", "restTimeTo3": "", "restTimeFrom3": "", "restTimeTo1": "1300", "restTimeTo2": "", "interval": "15" }]));
+        const timeSetting = [{
+            no: 1,
+            name: "社内",
+            workStartTime: "0900",
+            workEndTime: "1800",
+            interval: "15",
+            restTimeFrom1: "1200",
+            restTimeTo1: "1300",
+            restTimeFrom2: "",
+            restTimeTo2: "",
+            restTimeFrom3: "",
+            restTimeTo3: ""
+        }];
+        timeSettingsMasterSheet.getRange('B' + timeSettingsLastRowIndex).setValue(JSON.stringify(timeSetting));
     } else {
         const userMasterCell = userMasterSheet.getRange('B' + userMasterFindNext.getRowIndex());
         let userMasterData = JSON.parse(userMasterCell.getValue());
@@ -242,7 +259,6 @@ function changeUserMaster(email: string, value: any): void {
             ...userMasterData,
             name: value.name,  // 名前
             role: +value.role,  // 権限
-            defaultTimeSetings: +value.defaultTimeSetings,
             paidHolidayTotalTime: +value.paidHolidayTotalTime,  // 有給残時間
         };
         userMasterCell.setValue(JSON.stringify(userMasterData));
@@ -307,7 +323,7 @@ function createWorkingHoursSheet(data: any, date: string, id: string, name: stri
     targetFolder.addFile(DriveApp.getFileById(newSheet.getId())); // 対象フォルダにシートを追加
 
     const timeSettings = getTimeSettings()[id];
-    
+
     // 勤務表生成処理
 
     return newSheet.getUrl();
@@ -397,8 +413,9 @@ function resetCommuting(): void {
             const workingHoursFindNext = workingHoursTextFinder.findNext();
             const workingHoursCell = workingHoursSheet.getRange('B' + workingHoursFindNext.getRowIndex());
             const workingHoursData = JSON.parse(workingHoursCell.getValue());
-            workingHoursData[date.getDate() - 2]['end'] = '1800';
-            workingHoursData[date.getDate() - 2]['notes'] = '退勤忘れ ' + workingHoursData[date.getDate() - 2]['notes'];
+            const position = workingHoursData[date.getDate() - 2].records.length - 1;
+            workingHoursData[date.getDate() - 2].records[position].end = '1800';
+            workingHoursData[date.getDate() - 2].notes = '退勤忘れ ' + workingHoursData[date.getDate() - 2].notes;
             workingHoursCell.setValue(JSON.stringify(workingHoursData));
         }
     }

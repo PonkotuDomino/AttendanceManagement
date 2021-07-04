@@ -97,7 +97,7 @@ export function App() {
                                 <Switch>
                                     {/* ルーティング */}
                                     <Route exact path="/">
-                                        <Commuting user={userData} onChange={handleChange} />
+                                        <Commuting user={userData} onChange={handleChange} isDebug={isDebug} />
                                     </Route>
                                     <Route path="/workingHours">
                                         <WorkingHours user={userData} onChange={handleChange} isDebug={isDebug} />
@@ -116,7 +116,7 @@ export function App() {
                                     </Route>
                                     {/* デフォルトパス */}
                                     <Route>
-                                        <Commuting user={userData} onChange={handleChange} />
+                                        <Commuting user={userData} onChange={handleChange} isDebug={isDebug} />
                                     </Route>
                                     {/* エラーページ */}
                                     <Route path="/error">

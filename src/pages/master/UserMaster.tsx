@@ -73,7 +73,6 @@ export function UserMaster(props: { user: any, onChange: (conditions: any, data?
         if (state.id) {
             userData.name = data.name;
             userData.role = data.role;
-            userData.defaultTimeSetings = data.defaultTimeSetings;
             userData.paidHolidayTotalTime = data.paidHolidayTotalTime;
         } else {
             userData = {
@@ -81,7 +80,6 @@ export function UserMaster(props: { user: any, onChange: (conditions: any, data?
                 email: data.inputEmail,
                 name: data.name,
                 role: data.role,
-                defaultTimeSetings: data.defaultTimeSetings,
                 paidHolidayTotalTime: data.paidHolidayTotalTime
             };
         }
@@ -112,7 +110,6 @@ export function UserMaster(props: { user: any, onChange: (conditions: any, data?
         setValue('inputEmail', email || '');
         setValue('name', user.name || '');
         setValue('role', (user.role || 0) + '');
-        setValue('defaultTimeSetings', (user.defaultTimeSetings || 1) + '');
         setValue('paidHolidayTotalTime', user.paidHolidayTotalTime || '');
         setValue('isAdd', !!user.id);
     }
@@ -206,31 +203,6 @@ export function UserMaster(props: { user: any, onChange: (conditions: any, data?
                                         <MenuItem value="0">システム管理者</MenuItem>
                                         <MenuItem value="1">一般社員</MenuItem>
                                         <MenuItem value="2">管理職</MenuItem>
-                                    </Select>
-                                }
-                            />
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={1}>
-                        <Grid className={classes.gridItem} item sm={3}>
-                            <InputLabel id="select-defaultTimeSetings-label">時間設定</InputLabel>
-                            <Controller
-                                name="defaultTimeSetings"
-                                defaultValue="1"
-                                control={control}
-                                render={props =>
-                                    <Select
-                                        value={props.value}
-                                        labelId="select-defaultTimeSetings-label"
-                                        onChange={e => props.onChange(e)}
-                                    >
-                                        {
-                                            (Object.keys(state.timeSettings).length && state.id)
-                                                ? state.timeSettings[state.id].map((d: { no: string; name: string; }) =>
-                                                    <MenuItem key={d.name} value={d.no}>{d.name}</MenuItem>
-                                                )
-                                                : <MenuItem key="社内" value="1">社内</MenuItem>
-                                        }
                                     </Select>
                                 }
                             />

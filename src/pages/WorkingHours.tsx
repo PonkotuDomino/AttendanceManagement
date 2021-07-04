@@ -32,7 +32,6 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
         tableData: [],
         userList: [],
         timeSettings: {},
-        timeSettingsItems: {},
         loadFlag: false
     });
 
@@ -40,10 +39,9 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
         const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
         if (props.isDebug) {
             const userList = Object.entries(userMasterJson).map(x => x[1]);
-            const timeSettings = timeSettingsJson || {};
-            let timeSettingsItems = { 0: '' };
-            timeSettings[props.user.id].forEach((d: { no: number; name: string; }) => {
-                timeSettingsItems[d.no] = d.name;
+            let timeSettings = { 0: '' };
+            timeSettingsJson[props.user.id].forEach((d: { no: number; name: string; }) => {
+                timeSettings[d.no] = d.name;
             });
 
             setState(prevState => {
@@ -52,17 +50,16 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
                     workingHoursData: workingHoursJson || {},
                     tableData: workingHoursJson[yearMonth] || [],
                     userList: userList || [],
-                    timeSettings: timeSettingsJson || {},
+                    timeSettings,
                     loadFlag: true
                 };
             });
         } else {
             google.script.run
                 .withSuccessHandler((result: any) => {
-                    const timeSettings = result.timeSettings || {};
-                    let timeSettingsItems = { 0: '' };
-                    timeSettings[props.user.id].forEach((d: { no: number; name: string; }) => {
-                        timeSettingsItems[d.no] = d.name;
+                    let timeSettings = { 0: '' };
+                    result.timeSettings[props.user.id].forEach((d: { no: number; name: string; }) => {
+                        timeSettings[d.no] = d.name;
                     });
 
                     setState(prevState => {
@@ -72,7 +69,6 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
                             tableData: result.data[yearMonth] || [],
                             userList: result.users || [],
                             timeSettings,
-                            timeSettingsItems,
                             loadFlag: true
                         };
                     });
@@ -88,6 +84,7 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
         {
             title: '日付',
             field: 'date',
+            editable: 'never',
             render: ({ date }) => {
                 const dayOfWeek = (new Date(state.targetYearMonth.getFullYear(), state.targetYearMonth.getMonth(), date)).getDay();
                 if (dayOfWeek === 6) {
@@ -102,44 +99,189 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
         {
             title: '開始時刻',
             field: 'start',
-            render: ({ start }) => {
-                if (!start) {
+            editable: 'never',
+            render: ({ records }) => {
+                if (!records.length) {
                     return '';
                 }
 
-                const value = ('0' + start).slice(-4);
+                const value = ('0' + records[0].start).slice(-4);
                 return value.substring(0, 2) + ':' + value.substring(2, 4);
-            },
-            editComponent: ({ value, onChange }) => (<CustomTimePicker value={value} onChange={onChange} />)
+            }
         },
         {
             title: '終了時刻',
             field: 'end',
-            render: ({ end }) => {
-                if (!end) {
+            editable: 'never',
+            render: ({ records }) => {
+                if (!records.length || !records[records.length - 1].end) {
                     return '';
                 }
 
-                const value = ('0' + end).slice(-4);
+                const value = ('0' + records[records.length - 1].end).slice(-4);
                 return value.substring(0, 2) + ':' + value.substring(2, 4);
-            },
-            editComponent: ({ value, onChange }) => (<CustomTimePicker value={value} onChange={onChange} />)
+            }
         },
         {
             title: '休暇区分',
             field: 'leaveType',
-            lookup: { 0: '', 1: '有給休暇', 2: '午前有給', 3: '午後有給' }
-        },
-        {
-            title: '時間設定区分',
-            field: 'workTimeDivision',
-            lookup: state.timeSettingsItems || {}
+            lookup: { 0: '', 1: '有給休暇', 2: '時間有給' }
         },
         {
             title: '業務内容・備考',
             field: 'notes'
         }
     ];
+
+    const detailPanels = [{
+        tooltip: "時間詳細",
+        render: (rowData: { records: any[]; date: string; }) => {
+            const date = rowData.date;
+            return (
+                <EditableTable
+                    title={date + '日 時間詳細'}
+                    header={[
+                        {
+                            title: '日付',
+                            field: 'date',
+                            editable: 'never',
+                            hidden: true
+                        },
+                        {
+                            title: '時間設定区分',
+                            field: 'timeSetting',
+                            lookup: state.timeSettings || {}
+                        },
+                        {
+                            title: '開始時刻',
+                            field: 'start',
+                            render: ({ start }) => {
+                                if (!start) {
+                                    return '';
+                                }
+
+                                const value = ('0' + start).slice(-4);
+                                return value.substring(0, 2) + ':' + value.substring(2, 4);
+                            },
+                            editComponent: ({ value, onChange }) => (<CustomTimePicker value={value} onChange={onChange} />)
+                        },
+                        {
+                            title: '終了時刻',
+                            field: 'end',
+                            render: ({ end }) => {
+                                if (!end) {
+                                    return '';
+                                }
+
+                                const value = ('0' + end).slice(-4);
+                                return value.substring(0, 2) + ':' + value.substring(2, 4);
+                            },
+                            editComponent: ({ value, onChange }) => (<CustomTimePicker value={value} onChange={onChange} />)
+                        }
+                    ]}
+                    data={rowData.records}
+                    options={{
+                        pageSize: 2,
+                        search: false,
+                        headerStyle: { width: 'auto', whiteSpace: 'nowrap' },
+                        cellStyle: { width: 'auto', whiteSpace: 'nowrap' },
+                    }}
+                    handleInsert={
+                        state.sheetId == props.user.workingHoursSheetId
+                            ? (newData) => {
+                                delete newData.tableData;
+                                const newRecords = rowData.records;
+                                newRecords.push(newData);
+
+                                const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
+                                const newWorkingHoursData = state.workingHoursData;
+                                const newTableData = newWorkingHoursData[yearMonth];
+                                for (let index = 0; index < newTableData.length; index++) {
+                                    if (date === newTableData[index].date) {
+                                        newTableData[index].records = newRecords.sort((x, y) => x.start - y.start);
+                                        newTableData[index].isChange = true;
+                                        break;
+                                    }
+                                }
+
+                                newWorkingHoursData[yearMonth] = newTableData;
+                                props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, JSON.stringify(newTableData));
+
+                                setState(prevState => {
+                                    return {
+                                        ...prevState,
+                                        workingHoursData: newWorkingHoursData,
+                                        tableData: newTableData
+                                    };
+                                });
+                            }
+                            : undefined
+                    }
+                    handleUpdate={
+                        state.sheetId == props.user.workingHoursSheetId
+                            ? (newData, oldData) => {
+                                delete newData.tableData;
+                                const newRecords = rowData.records;
+                                newRecords[oldData.tableData.id] = newData;
+
+                                const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
+                                const newWorkingHoursData = state.workingHoursData;
+                                const newTableData = newWorkingHoursData[yearMonth];
+                                for (let index = 0; index < newTableData.length; index++) {
+                                    if (date === newTableData[index].date) {
+                                        newTableData[index].records = newRecords;
+                                        newTableData[index].isChange = true;
+                                        break;
+                                    }
+                                }
+
+                                newWorkingHoursData[yearMonth] = newTableData;
+                                props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, JSON.stringify(newTableData));
+
+                                setState(prevState => {
+                                    return {
+                                        ...prevState,
+                                        workingHoursData: newWorkingHoursData,
+                                        tableData: newTableData
+                                    };
+                                });
+                            }
+                            : undefined
+                    }
+                    handleDelete={
+                        state.sheetId == props.user.workingHoursSheetId
+                            ? (oldData) => {
+                                const newRecords = rowData.records;
+                                newRecords.splice(oldData.tableData.id);
+
+                                const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
+                                const newWorkingHoursData = state.workingHoursData;
+                                const newTableData = newWorkingHoursData[yearMonth];
+                                for (let index = 0; index < newTableData.length; index++) {
+                                    if (date === newTableData[index].date) {
+                                        newTableData[index].records = newRecords;
+                                        newTableData[index].isChange = true;
+                                        break;
+                                    }
+                                }
+
+                                newWorkingHoursData[yearMonth] = newTableData;
+                                props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, JSON.stringify(newTableData));
+
+                                setState(prevState => {
+                                    return {
+                                        ...prevState,
+                                        workingHoursData: newWorkingHoursData,
+                                        tableData: newTableData
+                                    };
+                                });
+                            }
+                            : undefined
+                    }
+                />
+            )
+        }
+    }];
 
     // 前月/今月ボタン押下時
     function handleChangeMonth(isNext: boolean) {
@@ -180,6 +322,7 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
         }
     }
 
+    // 勤務表作成
     function createWorkingHoursSheet() {
         alert('未実装');
         // google.script.run
@@ -238,6 +381,7 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
                     title={(state.targetYearMonth.getMonth() + 1) + '月'}
                     header={headers}
                     data={state.tableData}
+                    detailPanel={detailPanels}
                     options={{
                         pageSize: 10,
                         search: false,
@@ -245,25 +389,27 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
                         cellStyle: { width: 'auto', whiteSpace: 'nowrap' },
                     }}
                     handleUpdate={
-                        (newData, oldData) => {
-                            delete newData.tableData;
-                            const newTableData = state.tableData;
-                            newData.isChange = true;
-                            newTableData[oldData.tableData.id] = newData;
+                        state.sheetId == props.user.workingHoursSheetId
+                            ? (newData, oldData) => {
+                                delete newData.tableData;
+                                const newTableData = state.tableData;
+                                newData.isChange = true;
+                                newTableData[oldData.tableData.id] = newData;
 
-                            const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
-                            const newWorkingHoursData = state.workingHoursData;
-                            newWorkingHoursData[yearMonth] = newTableData;
-                            props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, newTableData);
+                                const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
+                                const newWorkingHoursData = state.workingHoursData;
+                                newWorkingHoursData[yearMonth] = newTableData;
+                                props.onChange({ type: pageName, sheetId: state.sheetId, yearMonth }, JSON.stringify(newTableData));
 
-                            setState(prevState => {
-                                return {
-                                    ...prevState,
-                                    expensesData: newWorkingHoursData,
-                                    tableData: newTableData
-                                };
-                            });
-                        }
+                                setState(prevState => {
+                                    return {
+                                        ...prevState,
+                                        workingHoursData: newWorkingHoursData,
+                                        tableData: newTableData
+                                    };
+                                });
+                            }
+                            : undefined
                     }
                 />
             </Box>
