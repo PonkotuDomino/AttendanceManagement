@@ -304,11 +304,11 @@ function createNewSheet(name: string) {
 }
 
 // 勤務表のスプレッドシートを作成
-function createWorkingHoursSheet(data: any, date: string, id: string, name: string): string {
+function createWorkingHoursSpreadSheet(data: any, date: string, id: string, name: string): string {
     const dates = date.split('/');
     const original = SpreadsheetApp.openById('1NTWfjsbha2JrJgmUeY1UPDWI_eMw8vw8TA3rNaj_8CI');　// ひな形取得
     const sheetName = original.getName() + '_' + name; // 新しいシート名
-    const newSheet = original.copy(sheetName); // コピーを作成
+    const newSpreadSheet = original.copy(sheetName); // コピーを作成
     const folder = DriveApp.getFolderById('1ypVPiaT05_T-UE1WbL0zYLwP05JViddY'); // 出力フォルダを取得
     const folderName = dates[0] + ('0' + dates[1]).slice(-2);
     const folderIterator = folder.getFoldersByName(folderName); // 対象フォルダのイテレータを取得
@@ -320,17 +320,169 @@ function createWorkingHoursSheet(data: any, date: string, id: string, name: stri
     if (existing.hasNext()) {
         targetFolder.removeFile(existing.next());
     }
-    targetFolder.addFile(DriveApp.getFileById(newSheet.getId())); // 対象フォルダにシートを追加
+    targetFolder.addFile(DriveApp.getFileById(newSpreadSheet.getId())); // 対象フォルダにシートを追加
 
     const timeSettings = getTimeSettings()[id];
 
     // 勤務表生成処理
+    const originalSheet = newSpreadSheet.getSheetByName('社内');
+    originalSheet.getRange('F3').setValue(dates[0]);
+    originalSheet.getRange('H3').setValue(dates[1]);
+    originalSheet.getRange('P3').setValue(name);
+    originalSheet.getRange('C6').setValue(dates[1]);
 
-    return newSheet.getUrl();
+    // 曜日設定
+    const thisMonth = new Date(+dates[0], +dates[1] - 1, 1);
+    let dayOfWeek = thisMonth.getDay();
+    const dayOfWeekObject = {
+        0: '日',
+        1: '月',
+        2: '火',
+        3: '水',
+        4: '木',
+        5: '金',
+        6: '土'
+    };
+    for (let i = 1; i <= (new Date(+dates[0], +dates[1], 0)).getDate(); i++) {
+        originalSheet.getRange('E' + (5 + i)).setValue(dayOfWeekObject[dayOfWeek]);
+
+        if (dayOfWeek === 6) {
+            dayOfWeek = 0;
+        } else {
+            dayOfWeek++;
+        }
+    }
+
+    for (let index = 0; index < timeSettings.length; index++) {
+        const timeSetting = timeSettings[index];
+        if (timeSetting.name == '社内') {
+            continue;
+        }
+
+        const newSheet = originalSheet.copyTo(newSpreadSheet);
+        newSheet.setName(timeSetting.name);
+        setWorkingHoursSheet(newSheet, data.filter(d => d.records.some(r => r.timeSetting === timeSetting.no)), timeSetting, thisMonth);
+    }
+
+    // 社内のシート設定
+    // 休日はここにまとめる？？？
+    setWorkingHoursSheet(originalSheet, data.filter(d => d.records.some(r => r.timeSetting === timeSettings[0].no)), timeSettings[0], thisMonth);
+
+    return newSpreadSheet.getUrl();
+}
+
+function setWorkingHoursSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet, data: any[], timeSetting: any, thisMonth: Date) {
+    // 祝日カレンダーを取得
+    const id = 'ja.japanese#holiday@group.v.calendar.google.com'
+    const cal = CalendarApp.getCalendarById(id);
+    const leaveTypes = {
+        0: '',
+        1: '有給休暇',
+        2: '時間有給',
+        3: '欠勤',
+        4: '振替休日',
+        5: '特別休暇',
+        6: '休日出勤'
+    };
+
+    const workEnd = [timeSetting.workEndTime.substring(0, 2), timeSetting.workEndTime.substring(2, 4)];
+    let totalWorkTime = 0;
+    data.forEach(d => {
+        for (let i = 0; i < d.records.length; i++) {
+            const record = d.records[i];
+            if (record.timeSetting === timeSetting.no) {
+                const rowIndex = 5 + d.date;
+                const start = [+record.start.substring(0, 2), +record.start.substring(2, 4)];
+                if (start[1] > 45) {
+                    start[0] += 1;
+                    start[1] = 0;
+                } else if ((start[1] % timeSetting.interval) !== 0) {
+                    start[1] = start[1] + (timeSetting.interval - (start[1] % timeSetting.interval));
+                }
+
+                sheet.getRange('F' + rowIndex).setValue(start[0] + ':' + ('0' + start[1]).slice(-2)); // 出勤時間
+                if (record.end) {
+                    const end = [record.end.substring(0, 2), record.end.substring(2, 4)];
+                    if (end[1] < 15) {
+                        end[1] = 0;
+                    } else if ((end[1] % timeSetting.interval) !== 0) {
+                        end[1] = end[1] - (end[1] % timeSetting.interval);
+                    }
+                    sheet.getRange('G' + rowIndex).setValue(end[0] + ':' + ('0' + end[1]).slice(-2)); // 退勤時間
+
+                    const workTime = (end[0] - start[0]) + ((end[0] - start[1]) / 60);
+                    totalWorkTime += workTime;
+
+                    thisMonth.setDate(d.date);
+                    const dayOfWeek = thisMonth.getDay();
+                    const events = cal.getEventsForDay(thisMonth);
+                    // 土、日、祝日
+                    if ((dayOfWeek == 0) || (dayOfWeek == 6) || events.length) {
+                        if (start[0] >= 22) {
+                            const holidayWorkTime = workTime;
+                            sheet.getRange('J' + rowIndex).setValue(holidayWorkTime); // 休出時間
+                            sheet.getRange('I' + rowIndex).setValue(holidayWorkTime); // 深夜残業
+                        } else if (end[0] >= 22) {
+                            sheet.getRange('J' + rowIndex).setValue((22 - start[0]) + (start[1] / 60)); // 休出時間
+                            const midnightOvertime = (end[0] - 22) + (end[1] / 60);
+                            sheet.getRange('I' + rowIndex).setValue(midnightOvertime); // 深夜残業
+                        } else {
+                            sheet.getRange('J' + rowIndex).setValue((end[0] - start[0]) + ((end[1] - start[1]) / 60)); // 休出時間
+                        }
+
+                        sheet.getRange('L' + rowIndex).setValue('休日出勤'); // 有給/欠勤/休出
+                    } else {
+                        if ((end[0] + '' + end[1]) > (workEnd[0] + '' + workEnd[1])) {
+                            const normalOvertime = (((end[0] >= 22) ? 22 : end[0]) - workEnd[0]) + ((end[1] - workEnd[1]) / 60);
+                            sheet.getRange('H' + rowIndex).setValue(normalOvertime); // 通常残業
+                            if (start[0] >= 22) {
+                                sheet.getRange('I' + rowIndex).setValue(workTime); // 深夜残業
+                            } else if (end[0] >= 22) {
+                                sheet.getRange('I' + rowIndex).setValue((end[0] - 22) + (end[1] / 60)); // 深夜残業
+                            }
+                        }
+
+                        sheet.getRange('L' + rowIndex).setValue(leaveTypes[d.leaveType]); // 有給/欠勤/休出
+                    }
+                }
+                sheet.getRange('M' + rowIndex).setValue(d.notes); // 業務内容
+            }
+        }
+    });
+
+    sheet.getRange('M40').setValue(totalWorkTime + '時間'); // 実稼働時間
+
+    const workStartTime = (+timeSetting.workStartTime.substring(0, 2)) + '時' + timeSetting.workStartTime.substring(2, 4) + '分';
+    const workEndTime = +workEnd[0] + '時' + workEnd[1] + '分';
+    sheet.getRange('E39').setValue(workStartTime + '～' + workEndTime);
+    const workTime = (timeSetting.workEndTime.substring(0, 2) - timeSetting.workStartTime.substring(0, 2)) + ((timeSetting.workEndTime.substring(2, 4) - timeSetting.workStartTime.substring(2, 4)) / 60);
+    sheet.getRange('I39').setValue(workTime + '時間');
+    sheet.getRange('E40').setValue(timeSetting.interval + '分毎');
+    const restTimeFrom1 = (+timeSetting.restTimeFrom1.substring(0, 2)) + '時' + timeSetting.restTimeFrom1.substring(2, 4) + '分';
+    const restTimeTo1 = (+timeSetting.restTimeTo1.substring(0, 2)) + '時' + timeSetting.restTimeTo1.substring(2, 4) + '分';
+    sheet.getRange('E41').setValue('昼休み  ' + restTimeFrom1 + '～' + restTimeTo1);
+    const restTime1 = ((timeSetting.restTimeTo1.substring(0, 2) - timeSetting.restTimeFrom1.substring(0, 2)) * 60) + (timeSetting.restTimeTo1.substring(2, 4) - timeSetting.restTimeFrom1.substring(2, 4));
+    sheet.getRange('I41').setValue(restTime1 + '分間');
+    if (timeSetting.restTimeFrom2) {
+        const restTimeFrom2 = (+timeSetting.restTimeFrom2.substring(0, 2)) + '時' + timeSetting.restTimeFrom2.substring(2, 4) + '分';
+        const restTimeTo2 = (+timeSetting.restTimeTo2.substring(0, 2)) + '時' + timeSetting.restTimeTo2.substring(2, 4) + '分';
+        sheet.getRange('E42').setValue('休憩1  ' + restTimeFrom2 + '～' + restTimeTo2);
+        const restTime2 = ((timeSetting.restTimeTo2.substring(0, 2) - timeSetting.restTimeFrom2.substring(0, 2)) * 60) + (timeSetting.restTimeTo2.substring(2, 4) - timeSetting.restTimeFrom2.substring(2, 4));
+        sheet.getRange('I42').setValue(restTime2 + '分間');
+    }
+    if (timeSetting.restTimeFrom3) {
+        const restTimeFrom3 = (+timeSetting.restTimeFrom3.substring(0, 2)) + '時' + timeSetting.restTimeFrom3.substring(2, 4) + '分';
+        const restTimeTo3 = (+timeSetting.restTimeTo3.substring(0, 2)) + '時' + timeSetting.restTimeTo3.substring(2, 4) + '分';
+        sheet.getRange('E43').setValue('休憩2  ' + restTimeFrom3 + '～' + restTimeTo3);
+        const restTime3 = ((timeSetting.restTimeTo3.substring(0, 2) - timeSetting.restTimeFrom3.substring(0, 2)) * 60) + (timeSetting.restTimeTo3.substring(2, 4) - timeSetting.restTimeFrom3.substring(2, 4));
+        sheet.getRange('I43').setValue(restTime3 + '分間');
+    }
+    sheet.getRange('E44').setValue('\'' + workEndTime); // 文字列化のためにシングルクォート
+    sheet.getRange('E45').setValue(timeSetting.interval + '分毎');
 }
 
 // 交通費精算のスプレッドシートを作成
-function createExpensesSheet(data: any, year: string, wareki: string, name: string): string {
+function createExpensesSpreadSheet(data: any, year: string, wareki: string, name: string): string {
     const dates = wareki.split('/');
     const original = SpreadsheetApp.openById('1WMAP-LCQPwy_7afhZwpkq2JlgvgPhgNxKnuWbX5tn7A');　// ひな形取得
     const sheetName = original.getName() + '_' + name; // 新しいシート名

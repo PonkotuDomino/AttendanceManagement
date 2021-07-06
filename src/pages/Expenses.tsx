@@ -150,7 +150,7 @@ export function Expenses(props: { user: any, onChange: (conditions: any, data?: 
             .withFailureHandler((error: { message: any; }) => {
                 alert(error.message);
             })
-            .createExpensesSheet(state.tableData, state.targetYearMonth.getFullYear(), wareki, props.user.name);
+            .createExpensesSpreadSheet(state.tableData, state.targetYearMonth.getFullYear(), wareki, props.user.name);
     }
 
     // ヘッダ情報設定

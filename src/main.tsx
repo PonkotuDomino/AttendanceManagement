@@ -93,6 +93,7 @@ export function App() {
                 (Object.keys(userData).length > 2)
                     ? (
                         <ThemeProvider theme={theme}>
+                            {isDebug ? <h5>デバッグ</h5> : null}
                             <HashRouter>
                                 <Switch>
                                     {/* ルーティング */}

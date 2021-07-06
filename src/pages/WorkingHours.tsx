@@ -125,7 +125,7 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
         {
             title: '休暇区分',
             field: 'leaveType',
-            lookup: { 0: '', 1: '有給休暇', 2: '時間有給' }
+            lookup: { 0: '', 1: '有給休暇', 2: '時間有給', 3: '欠勤', 4: '振替休日', 5: '特別休暇', 6: '休日出勤' }
         },
         {
             title: '業務内容・備考',
@@ -324,20 +324,23 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
 
     // 勤務表作成
     function createWorkingHoursSheet() {
-        alert('未実装');
-        // google.script.run
-        //     .withSuccessHandler((url: string) => {
-        //         if (url) {
-        //             window.open(url);
-        //             alert('作成しました。');
-        //         } else {
-        //             alert('エラーが発生しました。フォルダを確認してください。');
-        //         }
-        //     })
-        //     .withFailureHandler((error: { message: any; }) => {
-        //         alert(error.message);
-        //     })
-        //     .createWorkingHoursSheet(state.tableData, state.targetYearMonth.toLocaleDateString(), props.user.id, props.user.name);
+        if(props.isDebug){
+            alert('デバッグ時に印刷できません。');
+        }else{
+            google.script.run
+                .withSuccessHandler((url: string) => {
+                    if (url) {
+                        window.open(url);
+                        alert('作成しました。');
+                    } else {
+                        alert('エラーが発生しました。フォルダを確認してください。');
+                    }
+                })
+                .withFailureHandler((error: { message: any; }) => {
+                    alert(error.message);
+                })
+                .createWorkingHoursSpreadSheet(state.tableData, state.targetYearMonth.toLocaleDateString(), props.user.id, props.user.name);
+        }
     }
 
     return (
