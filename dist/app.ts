@@ -410,7 +410,7 @@ function setWorkingHoursSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet, data: a
                     }
                     sheet.getRange('G' + rowIndex).setValue(end[0] + ':' + ('0' + end[1]).slice(-2)); // 退勤時間
 
-                    const workTime = (end[0] - start[0]) + ((end[0] - start[1]) / 60);
+                    const workTime = (end[0] - start[0]) + ((end[1] - start[1]) / 60);
                     totalWorkTime += workTime;
 
                     thisMonth.setDate(d.date);
