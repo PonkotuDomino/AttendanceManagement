@@ -252,7 +252,7 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
                         state.sheetId == props.user.workingHoursSheetId
                             ? (oldData) => {
                                 const newRecords = rowData.records;
-                                newRecords.splice(oldData.tableData.id);
+                                newRecords.splice(oldData.tableData.id, 1);
 
                                 const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
                                 const newWorkingHoursData = state.workingHoursData;
@@ -339,7 +339,7 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
                 .withFailureHandler((error: { message: any; }) => {
                     alert(error.message);
                 })
-                .createWorkingHoursSpreadSheet(state.tableData, state.targetYearMonth.toLocaleDateString(), props.user.id, props.user.name);
+                .createWorkingHoursSpreadSheet(JSON.stringify(state.tableData), state.targetYearMonth.toLocaleDateString(), props.user.id, props.user.name);
         }
     }
 

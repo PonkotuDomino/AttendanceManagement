@@ -304,7 +304,7 @@ function createNewSheet(name: string) {
 }
 
 // 勤務表のスプレッドシートを作成
-function createWorkingHoursSpreadSheet(data: any, date: string, id: string, name: string): string {
+function createWorkingHoursSpreadSheet(data: string, date: string, id: string, name: string): string {
     const dates = date.split('/');
     const original = SpreadsheetApp.openById('1NTWfjsbha2JrJgmUeY1UPDWI_eMw8vw8TA3rNaj_8CI');　// ひな形取得
     const sheetName = original.getName() + '_' + name; // 新しいシート名
@@ -353,20 +353,40 @@ function createWorkingHoursSpreadSheet(data: any, date: string, id: string, name
         }
     }
 
+    const thisMonthData = JSON.parse(data);
     for (let index = 0; index < timeSettings.length; index++) {
         const timeSetting = timeSettings[index];
-        if (timeSetting.name == '社内') {
+        if (timeSetting.name === '社内') {
             continue;
         }
 
         const newSheet = originalSheet.copyTo(newSpreadSheet);
         newSheet.setName(timeSetting.name);
-        setWorkingHoursSheet(newSheet, data.filter(d => d.records.some(r => r.timeSetting === timeSetting.no)), timeSetting, thisMonth);
+        setWorkingHoursSheet(newSheet, thisMonthData.filter((d: { records: any[]; }) => d.records.some(r => +r.timeSetting === timeSetting.no)), timeSetting, thisMonth); // tableに設定されたデータは数値→文字列になるため、再変換
     }
 
     // 社内のシート設定
-    // 休日はここにまとめる？？？
-    setWorkingHoursSheet(originalSheet, data.filter(d => d.records.some(r => r.timeSetting === timeSettings[0].no)), timeSettings[0], thisMonth);
+    setWorkingHoursSheet(originalSheet, thisMonthData.filter((d: { records: any[]; }) => d.records.some(r => r.timeSetting === '1')), timeSettings[0], thisMonth);
+    
+    // 休日のみの場合は社内に記載
+    // 有給の残時間の計算は有給管理側で行う
+    // setWorkingHoursSheet()内に含めるように変更する
+    const leaveTypes = {
+        0: '',
+        1: '有給休暇',
+        2: '時間有給',
+        3: '欠勤',
+        4: '振替休日',
+        5: '特別休暇',
+        6: '休日出勤'
+    };
+    thisMonthData.forEach(d => {
+        const rowIndex = 5 + d.date;
+        if(d.records.length === 0){
+            originalSheet.getRange('L' + rowIndex).setValue(leaveTypes[d.leaveType]); // 有給/欠勤/休出
+            originalSheet.getRange('M' + rowIndex).setValue(d.notes); // 業務内容
+        }
+    });
 
     return newSpreadSheet.getUrl();
 }
@@ -386,12 +406,13 @@ function setWorkingHoursSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet, data: a
     };
 
     const workEnd = [timeSetting.workEndTime.substring(0, 2), timeSetting.workEndTime.substring(2, 4)];
+    const no = timeSetting.no;
     let totalWorkTime = 0;
     data.forEach(d => {
+        const rowIndex = 5 + d.date;
         for (let i = 0; i < d.records.length; i++) {
             const record = d.records[i];
-            if (record.timeSetting === timeSetting.no) {
-                const rowIndex = 5 + d.date;
+            if (+record.timeSetting === no) {
                 const start = [+record.start.substring(0, 2), +record.start.substring(2, 4)];
                 if (start[1] > 45) {
                     start[0] += 1;
