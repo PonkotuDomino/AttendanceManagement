@@ -593,3 +593,33 @@ function resetCommuting(): void {
         }
     }
 }
+
+// メール送信処理
+// recipient : 送信先メールアドレス
+// name : 申請者氏名
+// link : ページリンク
+// cancel : 申請取消フラグ
+function sendMail(recipient: string, name: string, link: string, cancel: boolean): void {
+    let subject: string;
+    let body: string;
+
+    subject = "有給申請";
+    if (cancel) {
+        subject += "取消";
+    }
+    subject += "(" + name + ")";
+
+    if (cancel) {
+        body = name + "からの有給申請が取り消されました。";
+    }
+    else {
+        body = name + "から有給の申請があります。";
+    }  
+
+    MailApp.sendEmail({
+        to: recipient,
+        name: name,
+        subject: subject,
+        body: body
+      });
+}
