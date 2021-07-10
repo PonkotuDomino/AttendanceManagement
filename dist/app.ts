@@ -366,7 +366,7 @@ function createWorkingHoursSpreadSheet(data: string, date: string, id: string, n
     }
 
     // 社内のシート設定
-    setWorkingHoursSheet(originalSheet, thisMonthData.filter((d: { records: any[]; }) => d.records.some(r => r.timeSetting === '1')), timeSettings[0], thisMonth);
+    setWorkingHoursSheet(originalSheet, thisMonthData.filter((d: { records: any[]; }) => d.records.some(r => +r.timeSetting === 1)), timeSettings[0], thisMonth);
     
     // 休日のみの場合は社内に記載
     // 有給の残時間の計算は有給管理側で行う
