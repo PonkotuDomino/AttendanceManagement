@@ -4,7 +4,6 @@ import { Box, Button, Divider, Grid, createStyles, makeStyles, TextField, InputA
 import { CircleLoading } from "../../components/CircleLoading";
 import { CustomTimePicker } from "../../components/CustomTimePicker";
 import { EditableTable } from "../../components/EditableTable";
-import { Header } from "../../components/Header";
 import { google } from "../../main";
 
 // ローカルデバッグ用
@@ -330,7 +329,6 @@ export function TimeSettingsMaster(props: { user: any, onChange: (conditions: an
     return (
         <>
             <CircleLoading {...{ watch: state.loadFlag }} />
-            <Header user={props.user} />
 
             <Box m={2}>
                 <form onSubmit={handleSubmit(handleClickAdd)} autoComplete="off">

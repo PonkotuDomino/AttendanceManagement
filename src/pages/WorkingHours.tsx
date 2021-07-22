@@ -3,7 +3,6 @@ import { Box, Button, createStyles, Grid, InputLabel, makeStyles, MenuItem, Sele
 import { CircleLoading } from "../components/CircleLoading";
 import { CustomTimePicker } from "../components/CustomTimePicker";
 import { EditableTable } from "../components/EditableTable";
-import { Header } from "../components/Header";
 import { google } from "../main";
 
 // ローカルデバッグ用
@@ -346,7 +345,6 @@ export function WorkingHours(props: { user: any, onChange: (conditions: any, dat
     return (
         <>
             <CircleLoading {...{ watch: state.loadFlag }} />
-            <Header user={props.user} />
 
             <Box m={2}>
                 <Grid container spacing={1} alignItems="flex-end">

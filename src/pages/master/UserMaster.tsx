@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Box, Button, createStyles, Grid, InputLabel, makeStyles, MenuItem, Select, TextField } from "@material-ui/core";
 import { CircleLoading } from "../../components/CircleLoading";
-import { Header } from "../../components/Header";
 import { google } from "../../main";
 
 // ローカルデバッグ用
@@ -117,7 +116,6 @@ export function UserMaster(props: { user: any, onChange: (conditions: any, data?
     return (
         <>
             <CircleLoading {...{ watch: state.loadFlag }} />
-            <Header user={props.user} />
 
             <Box m={2}>
                 <form onSubmit={handleSubmit(handleClickAdd)} autoComplete="off">

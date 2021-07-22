@@ -12,10 +12,10 @@ export function CustomTimePicker(props: { label?: string, value: string, onChang
                 autoOk
                 disableToolbar
                 ampm={false}
-                emptyLabel={'00:00'}
+                emptyLabel={'00:00'} // 要件等
                 label={props.label || ''}
                 value={time}
-                variant={'inline'}
+                variant="inline"
                 views={['hours', 'minutes']}
                 onChange={(value) => props.onChange(value ? ('0' + value.getHours()).slice(-2) + ('0' + value.getMinutes()).slice(-2) : null)}
             />

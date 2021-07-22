@@ -4,7 +4,6 @@ import { Box, Button, createStyles, Divider, Grid, InputAdornment, InputLabel, m
 import { CircleLoading } from "../components/CircleLoading";
 import { CustomDatePicker } from "../components/CustomDatePicker";
 import { EditableTable } from "../components/EditableTable";
-import { Header } from "../components/Header";
 import { google } from "../main";
 
 // ローカルデバッグ用
@@ -261,7 +260,6 @@ export function Expenses(props: { user: any, onChange: (conditions: any, data?: 
     return (
         <>
             <CircleLoading {...{ watch: state.loadFlag }} />
-            <Header user={props.user} />
 
             <Box m={2}>
                 <form onSubmit={handleSubmit(handleClickAdd)} autoComplete="off">

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { HashRouter, Route, Switch } from "react-router-dom";
-import { ThemeProvider } from "@material-ui/core";
+import { createStyles, makeStyles, Box, ThemeProvider } from "@material-ui/core";
 import { CircleLoading } from "./components/CircleLoading";
+import { Header } from "./components/Header";
 import { Commuting } from "./pages/Commuting";
 import { ErrorPage } from "./pages/ErrorPage";
 import { Expenses } from "./pages/Expenses";
@@ -20,7 +21,21 @@ const DEBUG_EMAIL = "soya.t@mat-ltd.co.jp";
 // Google Script Run呼び出し用変数を定義
 export let google = WindowExtention.google;
 
+// スタイルの指定
+const useStyle = makeStyles(() => createStyles({
+    container: {
+        paddingTop: '64px'
+    },
+    debugLabel:{
+        padding: '5px',
+        color: 'white',
+        backgroundColor: 'black',
+        margin: 0
+    }
+}));
+
 export function App() {
+    const classes = useStyle();
     // 各ページのpropsに割り当てる個人のデータ
     const [userData, setUserData] = useState({
         commuting: false,
@@ -93,38 +108,41 @@ export function App() {
                 (Object.keys(userData).length > 2)
                     ? (
                         <ThemeProvider theme={theme}>
-                            {isDebug ? <h5>デバッグ</h5> : null}
-                            <HashRouter>
-                                <Switch>
-                                    {/* ルーティング */}
-                                    <Route exact path="/">
-                                        <Commuting user={userData} onChange={handleChange} isDebug={isDebug} />
-                                    </Route>
-                                    <Route path="/workingHours">
-                                        <WorkingHours user={userData} onChange={handleChange} isDebug={isDebug} />
-                                    </Route>
-                                    <Route path="/expenses">
-                                        <Expenses user={userData} onChange={handleChange} isDebug={isDebug} />
-                                    </Route>
-                                    <Route path="/paidHoliday">
-                                        <PaidHoliday user={userData} onChange={handleChange} isDebug={isDebug} />
-                                    </Route>
-                                    <Route path="/timeSettingsMaster">
-                                        <TimeSettingsMaster user={userData} onChange={handleChange} isDebug={isDebug} />
-                                    </Route>
-                                    <Route path="/userMaster">
-                                        <UserMaster user={userData} onChange={handleChange} isDebug={isDebug} />
-                                    </Route>
-                                    {/* デフォルトパス */}
-                                    <Route>
-                                        <Commuting user={userData} onChange={handleChange} isDebug={isDebug} />
-                                    </Route>
-                                    {/* エラーページ */}
-                                    <Route path="/error">
-                                        <ErrorPage />
-                                    </Route>
-                                </Switch>
-                            </HashRouter>
+                            <Box className={classes.container}>
+                                {isDebug ? <h5 className={classes.debugLabel}>デバッグモード</h5> : null}
+                                <HashRouter>
+                                    <Header user={userData} />
+                                    <Switch>
+                                        {/* ルーティング */}
+                                        <Route exact path="/">
+                                            <Commuting user={userData} onChange={handleChange} isDebug={isDebug} />
+                                        </Route>
+                                        <Route path="/workingHours">
+                                            <WorkingHours user={userData} onChange={handleChange} isDebug={isDebug} />
+                                        </Route>
+                                        <Route path="/expenses">
+                                            <Expenses user={userData} onChange={handleChange} isDebug={isDebug} />
+                                        </Route>
+                                        <Route path="/paidHoliday">
+                                            <PaidHoliday user={userData} onChange={handleChange} isDebug={isDebug} />
+                                        </Route>
+                                        <Route path="/timeSettingsMaster">
+                                            <TimeSettingsMaster user={userData} onChange={handleChange} isDebug={isDebug} />
+                                        </Route>
+                                        <Route path="/userMaster">
+                                            <UserMaster user={userData} onChange={handleChange} isDebug={isDebug} />
+                                        </Route>
+                                        {/* デフォルトパス */}
+                                        <Route>
+                                            <Commuting user={userData} onChange={handleChange} isDebug={isDebug} />
+                                        </Route>
+                                        {/* エラーページ */}
+                                        <Route path="/error">
+                                            <ErrorPage />
+                                        </Route>
+                                    </Switch>
+                                </HashRouter>
+                            </Box>
                         </ThemeProvider>
                     )
                     : (

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { makeStyles, createStyles, Button, Box, TextField, Select, MenuItem, InputLabel, Grid } from "@material-ui/core";
-import { Header } from "../components/Header";
 import { google } from "../main";
 
 // ローカルデバッグ用
@@ -50,7 +49,6 @@ export function Commuting(props: { user: any, onChange: (conditions: any, data?:
     return (
         <>
             <CircleLoading {...{ watch: Object.keys(timeSettings).length > 0 }} />
-            <Header user={props.user} />
 
             <Box m={2}>
                 <form onSubmit={handleSubmit(handleCommutingButtonClick)} autoComplete="off">
