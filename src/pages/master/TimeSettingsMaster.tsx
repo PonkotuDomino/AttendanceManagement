@@ -510,7 +510,7 @@ export function TimeSettingsMaster(props: { user: any, onChange: (conditions: an
                             }
 
                             const newTableData = state.tableData;
-                            newTableData.splice(id);
+                            newTableData.splice(id, 1);
 
                             const newTimeSettingsData = state.timeSettingsData;
                             newTimeSettingsData[state.userId] = newTableData;

@@ -157,7 +157,7 @@ export function Expenses(props: { user: any, onChange: (conditions: any, data?: 
         {
             title: '番号',
             field: 'no',
-            editable: 'never',
+            hidden: true,
             initialEditValue: state.tableData.length
         },
         {
@@ -484,7 +484,7 @@ export function Expenses(props: { user: any, onChange: (conditions: any, data?: 
                     handleDelete={
                         (oldData) => {
                             const newTableData = state.tableData;
-                            newTableData.splice(oldData.tableData.id);
+                            newTableData.splice(oldData.tableData.id, 1);
 
                             const yearMonth = state.targetYearMonth.getFullYear() + ('0' + (state.targetYearMonth.getMonth() + 1)).slice(-2);
                             const newExpensesData = state.expensesData;
